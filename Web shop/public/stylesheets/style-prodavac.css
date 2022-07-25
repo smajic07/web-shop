@@ -1,0 +1,323 @@
+html{
+	height: 100%;
+	background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+	background-color: rgba(255,255,255,0);
+	color: white;
+}
+
+#tekstPoredSlikeNava{
+	margin: 0px 32px 0px 16px;
+	color: white;
+	font-weight: 700;
+	font-size: 175%;
+}
+
+.navLink{
+	text-align: center;
+	color: white;
+	font-size: 130%;
+}
+
+.navLink:hover{
+	border-radius: 1px;
+	background-color: #3399FF;
+	color: white;
+}
+
+.card {
+	background: #222;
+	border: 3px solid black;
+	color: rgba(250, 250, 250);
+	margin-bottom: 2rem;
+}
+
+.card-text{
+	color: rgba(250, 250, 250, 0.6);
+}
+
+.preostalo{
+	color: beige;
+	float: left;
+}
+
+.cijena{
+	float: right;
+	margin-right: 5px;
+	color: limegreen;
+	font-size: 110%;
+}
+
+.cijena:hover{
+	color: lime;
+}
+
+.preostalo:hover{
+	color: white;
+}
+
+.dugmic{
+	margin: 5px 2px;
+	text-align: center;
+}
+
+.form-element{
+	margin: 5px auto;
+	width: 70%;
+}
+
+label, input[type=text], textarea{
+	width: 100%;
+}
+
+.zaKat label{
+	width: 80%;
+}
+
+.za-broj{
+	margin: 5px auto;
+	width: 50%;
+}
+
+.za-broj input{
+	width: 58%;
+}
+
+.za-broj button{
+	width: 18%;
+}
+
+.button-element{
+	margin: 5px;
+	text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.kategorija{
+	background-color: yellow;
+	border: none;
+	color: black;
+	padding: 3px;
+	border-radius: 3px;
+	margin-right: 5px;
+	margin-top: 3px;
+}
+
+.zaKat{
+	padding: 5px;
+	background-color: rgba(100, 100, 100, 0.2);
+	height: 150px;
+	overflow-y: auto;
+}
+
+h2,h6{
+	text-align: center;
+}
+
+.formaSlika{
+	margin-top: -60px;
+	margin-bottom: 20px;
+}
+
+input[type=checkbox]{
+	width: 15%;
+}
+
+
+.ikonica{
+	color: black;
+	font-size: 28px;
+	background-color: rgba(255,255,255,0.5);
+	padding: 0 3px;
+	border-radius: 10px;
+	margin-bottom: -50px;
+}
+
+.ikonica:hover{
+	background-color: rgb(255,255,255);
+	cursor: pointer;
+}
+
+#kontenjerProfilne{
+	margin: 0 auto;
+	width: 300px;
+	height: 300px;
+	margin-bottom: 10px;
+}
+
+#formaProfilne{
+	margin-bottom: -25px;
+}
+
+#profilnaSellera{
+	width: 300px;
+	height: 300px;
+	border: solid 2px white;
+	border-radius: 50%;
+}
+
+.info{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 120%;
+	background-color: #222222;
+	padding: 10px;
+	border-radius: 8px;
+}
+
+#informacije{
+	padding: 10px;
+}
+
+#uredjivanje{
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
+
+.info img{
+	margin-bottom: 15px;
+}
+
+#kontenjerPodataka{
+	background-color: white;
+	color: black;
+	border-radius: 3px;
+	padding-top: 2px;
+}
+
+.info p{
+	border-bottom: solid 2px black;
+	padding-left: 10px;
+}
+
+.nazivOznaka{
+	display: inline-block;
+	width: 150px;
+}
+
+.card-text{
+	height: 70px;
+	overflow-y: auto;
+}
+
+
+html {
+	scroll-behavior: smooth;
+}
+
+#dugmadKontenjer{
+	padding-top: 20px;
+	padding-bottom: 30px;
+}
+
+.komentar{
+	text-align: left;
+	border: solid 3px darkgrey;
+	background-color: white;
+	color: black;
+	margin-top: 5px;
+	border-top-right-radius: 10px;
+	margin-bottom: 15px;
+}
+
+.div_slike_komentara{
+	display: inline-block;
+	width: 120px;
+	height: 120px;
+}
+
+.div_slike_komentara .slika_komentara{
+	width: 120px;
+	height: 120px;
+	float: right;
+	border-radius: 50%;
+	border: solid 2px black;
+	margin-bottom: 20px;
+}
+
+.nazivKomentatora{
+	text-align: left;
+	margin-top: 10px;
+	cursor: pointer;
+	color: #3399FF;
+}
+
+#komentari, #artikli {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+#ocjena{
+	text-align: center;
+	font-size: 28px;
+}
+
+.puna{
+	color: gold;
+}
+
+.pozadina{
+	margin: 1px auto;
+	height: 450px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	align-items: flex-end;
+}
+
+#divProfilne{
+	display: flex;
+	align-items: flex-end;
+}
+
+#profilna{
+	border: solid 3px white;
+	border-radius: 50%;
+	outline: solid 2px black;
+	width: 250px;
+	height: 250px;
+	flex-shrink: 0;
+	margin-bottom: -60px;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.form-element2{
+	margin: 5px auto;
+	width: 100%;
+}
+
+input, label{
+	width: 100%;
+}
+
+table{
+	margin-top: 80px;
+}
+
+.button-element{
+	text-align: center;
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+
+#ocjena{
+	margin-top: 30px;
+}
+
+#lozinka{
+	margin-top: 70px;
+}
+
+.sifra{
+	margin-left: -30px;
+	color: black;
+	cursor: pointer;
+	font-size: 16px;
+}

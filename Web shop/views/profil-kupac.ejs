@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title><%=buyerInfo.first_name + " " + buyerInfo.last_name%></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-kupac.css' />
+
+    <script>
+      function provjeriJednakost(){
+        if(document.getElementById("password").value !== document.getElementById("password2").value){
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px red";
+          document.getElementById("password").style.boxShadow = "0 0 10px red";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 1px red";
+          document.getElementById("password2").style.boxShadow = "0 0 7px red";
+        }
+        else{
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px #03C03C";
+          document.getElementById("password").style.boxShadow = "0 0 10px #03C03C";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 2px #03C03C";
+          document.getElementById("password2").style.boxShadow = "0 0 7px #03C03C";
+        }
+      }
+
+      function tuglajSifru(pas, tpas){
+        var togglePassword = document.getElementById(tpas);
+        var password = document.getElementById(pas);
+        togglePassword.classList.toggle('bi-eye');
+        var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+      }
+    </script>
+
+    <script>
+      var zaObrisati = [];
+      function obrisi(id_kategorije){
+        document.getElementById("kat"+id_kategorije).classList.toggle("text-white");
+        document.getElementById("kat"+id_kategorije).classList.toggle("bg-danger");
+        document.getElementById("kat"+id_kategorije).style.border = "solid 1px black";
+        let obrisati = true;
+        let indeks;
+        for(let i=0; i<zaObrisati.length; i++){
+          if(id_kategorije === zaObrisati[i]){
+            obrisati = false;
+            indeks = i;
+            break;
+          }
+        }
+        if(obrisati) zaObrisati.push(id_kategorije);
+        if(!obrisati) zaObrisati.splice(indeks, 1);
+      }
+
+      function promijeniLozinku(){
+        let info = {
+          password: document.getElementById("password").value,
+          password2: document.getElementById("password2").value,
+        }
+        if(info.password !== info.password2){
+          alert("Šifre se ne poklapaju!");
+          return;
+        } else if (info.password.length < 8){
+          alert("Šifra mora biti minimalno dužine 8!");
+          return;
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/kupac/promijeniLozinku",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/kupac");
+        });
+      }
+
+      var zaDodati = [];
+      function dodaj(id_kategorije){
+        document.getElementById("kat"+id_kategorije).classList.toggle("text-white");
+        document.getElementById("kat"+id_kategorije).classList.toggle("bg-success");
+        document.getElementById("kat"+id_kategorije).style.border = "solid 1px black";
+        let dodati = true;
+        let indeks;
+        for(let i=0; i<zaDodati.length; i++){
+          if(id_kategorije === zaDodati[i]){
+            dodati = false;
+            indeks = i;
+            break;
+          }
+        }
+        if(dodati) zaDodati.push(id_kategorije);
+        if(!dodati) zaDodati.splice(indeks, 1);
+      }
+
+      function promijeniInterese(){
+        let info = {
+          za_obrisati: JSON.stringify(zaObrisati),
+          za_dodati: JSON.stringify(zaDodati)
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/kupac/urediInterese",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/kupac/profil");
+        });
+      }
+    </script>
+
+    <script>
+      function otkaziNarudzbu(id_narudzbe){
+        $.ajax({
+          url: '/kupac/otkaziNarudzbu/' + id_narudzbe,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/kupac/profil");
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/kupac/profil" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-person-circle"></i></a>
+          <span id="tekstPoredSlikeNava">Profil</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/kupac">Home</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/poruke/poruke">Čat</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="pozadina row justify-content-center" style="background-image: url(<%=buyerInfo.background_picture%>);">
+        <div id="divProfilne" class="col-8 col-sm-6 col-lg-4 col-xl-3">
+          <form action="/kupac/promijeniPozadinu" method="post" enctype="multipart/form-data">
+            <i class="ikonica bi bi-image" id="dajFajl1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Promijeni pozadinu"></i>
+            <input class="d-none" type="file" name="avatar" id="pozadinska-slika" onchange="form.submit()" /><br>
+          </form>
+          <img id="profilna" src="<%=buyerInfo.profile_picture%>" alt="profilna slika">
+          <form action="/kupac/promijeniProfilnu" method="post" enctype="multipart/form-data">
+            <i class="ikonica bi bi-camera" id="dajFajl2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Promijeni profilnu"></i>
+            <input class="d-none" type="file" name="avatar" id="profilna-slika" onchange="form.submit()" /><br>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 100px;"></div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="dugmeDiv" class="col-12">
+          <button class="btn btn-info" onclick="lozinka()"
+          <%if(status === 'Arhiviran'){%> disabled <%}%>>Promijeni lozinku</button>
+          <button class="btn btn-warning" onclick="interesi()"
+          <%if(status === 'Arhiviran'){%> disabled <%}%>>Uredi interese</button>
+          <button class="btn btn-primary" onclick="narudzbe()">Prikaži narudžbe</button>
+          <button class="btn btn-success" onclick="prikaziPotrosnju()">Prikaži potrošnju</button>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-8 col-sm-6 col-lg-4 col-xl-3">
+          <div id="lozinka" style="display: none;">
+            <div class="form-element">
+              <label for="password">Nova lozinka: </label><br>
+              <input onkeyup="provjeriJednakost()" type="password" id="password" name="password" minlength="8" maxlength="16" required>
+              <i onclick="tuglajSifru('password', 'togglePassword1')" class="sifra bi bi-eye-slash" id="togglePassword1"></i><br>
+              <label for="password2">Potvrdi lozinku: </label><br>
+              <input onkeyup="provjeriJednakost()" type="password" id="password2" name="password2" minlength="8" maxlength="16" required>
+              <i onclick="tuglajSifru('password2', 'togglePassword2')" class="sifra bi bi-eye-slash" id="togglePassword2"></i><br>
+            </div>
+            <div class="button-element">
+              <button class="btn btn-success" onclick="promijeniLozinku()">Promijeni</button>
+              <button class="btn btn-danger" onclick="odustaniLozinka()">Odustani</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="potrosnja" class="row justify-content-center">
+        <div id="potrosnjaa">Ukupno potrošeno: <%=total_spent%> KM</div>
+        <div style="text-align: center;">
+          <button class="btn btn-warning" onclick="zatvoriPotrosnju()">Zatvori</button>
+        </div>
+      </div>
+      <div id="interesi" class="row justify-content-center d-none">
+        <%{ let bileVecOveKategorije = []; %>
+          <div class="col-8 col-md-5 col-lg-3">
+            <h3>Izbriši interese</h3>
+            <%for(let i=0; i<categories.length; i++){ bileVecOveKategorije.push(false); %>
+              <%if(interests === null) continue;%>
+              <%for(let j=0; j<interests.length; j++){%>
+                <%if(categories[i].id === interests[j]){ bileVecOveKategorije[i] = true; %>
+                  <div id="kat<%=categories[i].id%>" class="kategorija"><%=categories[i].category_name%><span class="oznaka oznaka1"> <i class="bi bi-dash-circle" onclick="obrisi(<%=categories[i].id%>)"></i> </span></div>
+                <%}%>
+              <%}%>
+            <%}%>
+          </div>
+          <div class="col-8 col-md-5 col-lg-3">
+            <h3>Dodaj interese</h3>
+            <%for(let i=0; i<categories.length; i++){%>
+              <%if(!bileVecOveKategorije[i]){%>
+                <div id="kat<%=categories[i].id%>" class="kategorija"><%=categories[i].category_name%><span class="oznaka oznaka2"> <i class="bi bi-plus-circle" onclick="dodaj(<%=categories[i].id%>)"></i> </span></div>
+              <%}%>
+            <%}%>
+          </div>
+          <div class="button-element">
+            <button class="btn btn-success" onclick="promijeniInterese()">Promijeni</button>
+            <button class="btn btn-danger" onclick="odustaniInteresi()">Odustani</button>
+          </div>
+        <%}%>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="narudzbe" class="d-none row justify-content-center">
+        <%if (orders.length !== 0) { let ukupan_iznos = 0; let ukupno_za_narudzbu = 0;
+            let broj_narudzbe = 2;%>
+            <h4 class="naslov">Narudžba 1</h4><br>
+            <%for(let i=0; i<orders.length; i++){ %>
+
+              <div class="artikl col-12 col-lg-8 col-xl-7">
+                <img class="slika" src="<%=orders[i].picture%>">
+                <h5 class="ime_artikla">
+                  <span class="link_ime_artikla" onclick="otvoriArtikl(<%=orders[i].articles_id%>)">
+                    <%=orders[i].article_name%>
+                  </span>
+                </h5>
+                <div class="kolicina">Količina:
+                  <input class="inputKolicina" value="<%=orders[i].quantity%>" id="polje<%=orders[i].articles_id%>" disabled>
+                </div>
+                <div class="cijena_artikla">Cijena:
+                  <%=orders[i].unit_price%> KM
+                </div><br>
+                <div class="ukupno_artikl">Ukupno:
+                  <%=orders[i].price%> KM
+                  <%ukupan_iznos += orders[i].price; ukupno_za_narudzbu += orders[i].price;%>
+                </div><br>
+              </div>
+
+              <%if (i !== orders.length-1 && orders[i].id !== orders[i+1].id) {%>
+
+                <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+                  Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+                </div>
+
+                <%if(orders[i].status === null) {%>
+                  <div class="dugmadKontenjer">
+                    <button class="btn btn-danger" onclick="otkaziNarudzbu(<%=orders[i].id%>)">Otkaži narudžbu</button>
+                  </div>
+                <%} else if(orders[i].status === 'Delivered') {%>
+                  <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+                    Narudžba je isporučena
+                  </div>
+                <%} else if(orders[i].status === 'Rejected') {%>
+                  <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+                    Narudžba je odbijena
+                  </div>
+                <%} else if(orders[i].status === 'Cancelled') {%>
+                  <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+                    Narudžbu ste otkazali
+                  </div>
+                <%} else if(orders[i].status === 'Accepted') {%>
+                  <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+                    Narudžba je prihvaćena, te puštena u isporuku
+                  </div>
+                <%}%>
+
+                <h4 class="naslov">Narudžba <%=broj_narudzbe%></h4><br>
+              <% broj_narudzbe++; ukupno_za_narudzbu = 0; } else if (i === orders.length -1) {%>
+
+                <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+                  Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+                </div>
+
+                <%if(orders[i].status === null) {%>
+                <div class="dugmadKontenjer">
+                  <button class="btn btn-danger" onclick="otkaziNarudzbu(<%=orders[i].id%>)">Otkaži narudžbu</button>
+                </div>
+                <%} else if(orders[i].status === 'Delivered') {%>
+                  <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+                    Narudžba je isporučena
+                  </div>
+                <%} else if(orders[i].status === 'Rejected') {%>
+                  <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+                    Narudžba je odbijena
+                  </div>
+                <%} else if(orders[i].status === 'Cancelled') {%>
+                  <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+                    Narudžbu ste otkazali
+                  </div>
+                <%} else if(orders[i].status === 'Accepted') {%>
+                  <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+                    Narudžba je prihvaćena, te puštena u isporuku
+                  </div>
+                <%}%>
+            <%}%>
+          <%}%>
+          <hr>
+          <div class="alert alert-info">
+              Ukupno uloženo: <%=ukupan_iznos%> KM
+          </div>
+        <%} else {%>
+        <div class="alert alert-danger">
+          Nemate nikakvih narudžbi
+        </div>
+        <%}%>
+        <div class="dugmadKontenjer">
+          <button class="btn btn-warning" onclick="zatvoriNarudzbe()">Zatvori narudžbe</button>
+        </div>
+      </div>
+    </div>
+
+  <script>
+    function narudzbe(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("narudzbe").classList.toggle("d-none");
+      document.getElementById("narudzbe").scrollIntoView();
+    }
+
+    function zatvoriNarudzbe(){
+      document.getElementById("narudzbe").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+
+    function lozinka(){
+        document.getElementById("dugmeDiv").style.display = "none";
+        document.getElementById("lozinka").style.display = "block";
+        window.scrollTo(0,document.body.scrollHeight);
+    }
+
+    function interesi(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("interesi").classList.toggle("d-none");
+      document.getElementById("interesi").scrollIntoView();
+    }
+
+    function odustaniLozinka(){
+      document.getElementById("lozinka").style.display = "none";
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+
+    function odustaniInteresi(){
+      for(let i=0; i<zaObrisati.length; i++){
+        document.getElementById("kat"+zaObrisati[i]).classList.toggle("text-white");
+        document.getElementById("kat"+zaObrisati[i]).classList.toggle("bg-danger");
+        document.getElementById("kat"+zaObrisati[i]).style.border = "solid 1px black";
+      }
+      zaObrisati = [];
+      for(let i=0; i<zaDodati.length; i++){
+        document.getElementById("kat"+zaDodati[i]).classList.toggle("text-white");
+        document.getElementById("kat"+zaDodati[i]).classList.toggle("bg-success");
+        document.getElementById("kat"+zaDodati[i]).style.border = "solid 1px black";
+      }
+      zaDodati = [];
+      document.getElementById("interesi").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+
+    function prikaziPotrosnju(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("potrosnja").style.display = "block";
+      window.scrollTo(0,document.body.scrollHeight);
+    }
+
+    function zatvoriPotrosnju(){
+      document.getElementById("potrosnja").style.display = "none";
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+
+    document.getElementById('dajFajl1').onclick = function() {
+      document.getElementById('pozadinska-slika').click();
+    };
+    document.getElementById('dajFajl2').onclick = function() {
+      document.getElementById('profilna-slika').click();
+    };
+    function otvoriArtikl(id_artikla){
+      location.assign("/kupac/artikl/" + id_artikla);
+    }
+  </script>
+
+  <!-- javascript kod, potreban za tooltip -->
+  <script type="text/javascript">
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+
+  </body>
+</html>

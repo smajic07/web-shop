@@ -1,0 +1,99 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    background-color: rgba(255,255,255,0);
+    color: white;
+}
+
+#tekstPoredSlikeNava{
+    margin: 0px 32px 0px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 175%;
+}
+
+.navLink{
+    text-align: center;
+    color: white;
+    font-size: 130%;
+}
+
+.navLink:hover{
+    border-radius: 1px;
+    background-color: #3399FF;
+    color: white;
+}
+
+.pozadina{
+    margin: 1px auto;
+    height: 450px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-items: flex-end;
+}
+
+#divProfilne{
+    display: flex;
+    align-items: flex-end;
+}
+
+#profilna{
+    border: solid 3px white;
+    border-radius: 50%;
+    outline: solid 2px black;
+    width: 250px;
+    height: 250px;
+    flex-shrink: 0;
+    margin-bottom: -60px;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.ikonica{
+    color: black;
+    font-size: 28px;
+    background-color: rgba(255,255,255,0.5);
+    padding: 0 3px;
+    border-radius: 10px;
+    margin-bottom: -50px;
+}
+
+.ikonica:hover{
+    background-color: rgb(255,255,255);
+    cursor: pointer;
+}
+
+h3{
+    text-align: center;
+    margin-top: 7px;
+}
+
+#odjava{
+    margin-right: 5px;
+}
+
+#searchInput{
+    margin: auto;
+    height: 30px;
+    color: black;
+    margin-top: 10px;
+}
+
+#search2{
+    margin-top: 10px;
+    text-align: center;
+}
+
+#searchIkona{
+    margin-left: 5px;
+    color: white;
+    font-size: 20px;
+}
+
+#searchIkona:hover{
+    cursor: pointer;
+    color: limegreen;
+}

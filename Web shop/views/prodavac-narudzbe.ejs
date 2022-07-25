@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title>Narudžbe</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-prodavac-narudzbe.css' />
+
+    <script>
+      function potvrdiNarudzbu(id_narudzbe){
+        $.ajax({
+          url: "/prodavac/potvrdiNarudzbu/" + id_narudzbe,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac/narudzbe");
+        });
+      }
+      function odbijNarudzbu(id_narudzbe){
+        $.ajax({
+          url: "/prodavac/odbijNarudzbu/" + id_narudzbe,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac/narudzbe");
+        });
+      }
+      function dostaviNarudzbu(id_narudzbe){
+        $.ajax({
+          url: "/prodavac/isporuciNarudzbu/" + id_narudzbe,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac/narudzbe");
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/prodavac/narudzbe" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-book"></i></a>
+          <span id="tekstPoredSlikeNava">Narudžbe</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/prodavac">Profil</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/poruke/poruke">Čat</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div style="height: 100px;"></div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="dugmeDiv" class="col-12">
+          <button class="btn btn-primary" onclick="narudzbe()">Nove narudžbe</button>
+          <button class="btn btn-secondary" onclick="narudzbe2()">Obrađene narudžbe</button>
+          <button class="btn btn-info" onclick="narudzbe3()">Isporuči narudžbe</button>
+          <button class="btn btn-success" onclick="tuglajProfit()">Ukupan profit</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="narudzbe" class="d-none row justify-content-center">
+        <%if (orders.length !== 0) { let ukupan_iznos = 0; let ukupno_za_narudzbu = 0;
+            let broj_narudzbe = 2;%>
+            <h4 class="naslov">Narudžba 1</h4><br>
+            <%for(let i=0; i<orders.length; i++){ %>
+
+              <div class="artikl col-12 col-lg-8 col-xl-7">
+                <img class="slika" src="<%=orders[i].picture%>">
+                <h5 class="ime_artikla">
+                  <span class="link_ime_artikla">
+                    <%=orders[i].article_name%>
+                  </span>
+                </h5>
+                <div class="kolicina">Količina:
+                  <input class="inputKolicina" value="<%=orders[i].quantity%>" id="polje<%=orders[i].articles_id%>" disabled>
+                </div>
+                <div class="cijena_artikla">Cijena:
+                  <%=orders[i].unit_price%> KM
+                </div><br>
+                <div class="ukupno_artikl">Ukupno:
+                  <%=orders[i].price%> KM
+                  <%ukupan_iznos += orders[i].price; ukupno_za_narudzbu += orders[i].price;%>
+                </div><br>
+              </div>
+
+              <%if (i !== orders.length-1 && orders[i].id !== orders[i+1].id) {%>
+
+                <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+                  Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+                </div>
+
+                <%if(orders[i].status === null) {%>
+                  <div class="dugmadKontenjer">
+                    <button class="btn btn-success" onclick="potvrdiNarudzbu(<%=orders[i].id%>)">Potvrdi narudžbu</button>
+                    <button class="btn btn-danger" onclick="odbijNarudzbu(<%=orders[i].id%>)">Odbij narudžbu</button>
+                  </div>
+                <%}%>
+
+                <h4 class="naslov">Narudžba <%=broj_narudzbe%></h4><br>
+              <% broj_narudzbe++; ukupno_za_narudzbu = 0; } else if (i === orders.length -1) {%>
+
+                <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+                  Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+                </div>
+
+                <%if(orders[i].status === null) {%>
+                <div class="dugmadKontenjer">
+                  <button class="btn btn-success" onclick="potvrdiNarudzbu(<%=orders[i].id%>)">Potvrdi narudžbu</button>
+                  <button class="btn btn-danger" onclick="odbijNarudzbu(<%=orders[i].id%>)">Odbij narudžbu</button>
+                </div>
+                <%}%>
+            <%}%>
+          <%}%>
+          <hr>
+          <div class="alert alert-info">
+              Ukupno uloženo: <%=ukupan_iznos%> KM
+          </div>
+        <%} else {%>
+        <div class="alert alert-danger">
+          Nemate novih narudžbi
+        </div>
+        <%}%>
+        <div class="dugmadKontenjer">
+          <button class="btn btn-warning" onclick="zatvoriNarudzbe()">Zatvori narudžbe</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="narudzbe2" class="d-none row justify-content-center">
+        <%if (processedOrders.length !== 0) { let ukupan_iznos = 0; let ukupno_za_narudzbu = 0;
+          let broj_narudzbe = 2;%>
+        <h4 class="naslov">Narudžba 1</h4><br>
+        <%for(let i=0; i<processedOrders.length; i++){ %>
+
+        <div class="artikl col-12 col-lg-8 col-xl-7">
+          <img class="slika" src="<%=processedOrders[i].picture%>">
+          <h5 class="ime_artikla">
+                  <span class="link_ime_artikla">
+                    <%=processedOrders[i].article_name%>
+                  </span>
+          </h5>
+          <div class="kolicina">Količina:
+            <input class="inputKolicina" value="<%=processedOrders[i].quantity%>" id="polje<%=processedOrders[i].articles_id%>" disabled>
+          </div>
+          <div class="cijena_artikla">Cijena:
+            <%=processedOrders[i].unit_price%> KM
+          </div><br>
+          <div class="ukupno_artikl">Ukupno:
+            <%=processedOrders[i].price%> KM
+            <%ukupan_iznos += processedOrders[i].price; ukupno_za_narudzbu += processedOrders[i].price;%>
+          </div><br>
+        </div>
+
+        <%if (i !== processedOrders.length-1 && processedOrders[i].id !== processedOrders[i+1].id) {%>
+
+        <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+          Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+        </div>
+
+        <%if(processedOrders[i].status === 'Delivered') {%>
+          <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+            Narudžbu ste isporučili
+          </div>
+        <%} else if(processedOrders[i].status === 'Rejected') {%>
+          <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+            Narudžbu ste odbili
+          </div>
+        <%} else if(processedOrders[i].status === 'Cancelled') {%>
+          <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+            Kupac je otkazao narudžbu
+          </div>
+        <%}%>
+
+        <h4 class="naslov">Narudžba <%=broj_narudzbe%></h4><br>
+        <% broj_narudzbe++; ukupno_za_narudzbu = 0; } else if (i === processedOrders.length - 1) {%>
+
+        <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+          Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+        </div>
+
+        <%if(processedOrders[i].status === 'Delivered') {%>
+          <div class="alert alert-success col-12 col-lg-8 col-xl-7">
+            Narudžbu ste isporučili
+          </div>
+        <%} else if(processedOrders[i].status === 'Rejected') {%>
+          <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+            Narudžbu ste odbili
+          </div>
+        <%} else if(processedOrders[i].status === 'Cancelled') {%>
+          <div class="alert alert-danger col-12 col-lg-8 col-xl-7">
+            Kupac je otkazao narudžbu
+          </div>
+        <%}%>
+        <%}%>
+        <%}%>
+        <hr>
+        <div class="alert alert-info">
+          Ukupno uloženo: <%=ukupan_iznos%> KM
+        </div>
+        <%} else {%>
+          <div class="alert alert-danger">
+            Nemate obrađenih narudžbi
+          </div>
+        <%}%>
+        <div class="dugmadKontenjer">
+          <button class="btn btn-warning" onclick="zatvoriNarudzbe2()">Zatvori narudžbe</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="narudzbe3" class="d-none row justify-content-center">
+        <%if (undeliveredOrders.length !== 0) { let ukupan_iznos = 0; let ukupno_za_narudzbu = 0;
+          let broj_narudzbe = 2;%>
+        <h4 class="naslov">Narudžba 1</h4><br>
+        <%for(let i=0; i<undeliveredOrders.length; i++){ %>
+
+        <div class="artikl col-12 col-lg-8 col-xl-7">
+          <img class="slika" src="<%=undeliveredOrders[i].picture%>">
+          <h5 class="ime_artikla">
+                  <span class="link_ime_artikla">
+                    <%=undeliveredOrders[i].article_name%>
+                  </span>
+          </h5>
+          <div class="kolicina">Količina:
+            <input class="inputKolicina" value="<%=undeliveredOrders[i].quantity%>" id="polje<%=undeliveredOrders[i].articles_id%>" disabled>
+          </div>
+          <div class="cijena_artikla">Cijena:
+            <%=undeliveredOrders[i].unit_price%> KM
+          </div><br>
+          <div class="ukupno_artikl">Ukupno:
+            <%=undeliveredOrders[i].price%> KM
+            <%ukupan_iznos += undeliveredOrders[i].price; ukupno_za_narudzbu += undeliveredOrders[i].price;%>
+          </div><br>
+        </div>
+
+        <%if (i !== undeliveredOrders.length-1 && undeliveredOrders[i].id !== undeliveredOrders[i+1].id) {%>
+
+        <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+          Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+        </div>
+
+        <%if(undeliveredOrders[i].status === 'Accepted') {%>
+            <div class="dugmadKontenjer">
+              <button class="btn btn-success" onclick="dostaviNarudzbu(<%=undeliveredOrders[i].id%>)">Isporuči</button>
+            </div>
+        <%}%>
+
+        <h4 class="naslov">Narudžba <%=broj_narudzbe%></h4><br>
+        <% broj_narudzbe++; ukupno_za_narudzbu = 0; } else if (i === undeliveredOrders.length - 1) {%>
+
+        <div class="prviAlert alert alert-primary col-12 col-lg-8 col-xl-7">
+          Ukupan iznos narudžbe: <%=ukupno_za_narudzbu;%> KM
+        </div>
+
+        <%if(undeliveredOrders[i].status === 'Accepted') {%>
+            <div class="dugmadKontenjer">
+              <button class="btn btn-success" onclick="dostaviNarudzbu(<%=undeliveredOrders[i].id%>)">Isporuči</button>
+            </div>
+        <%}%>
+        <%}%>
+        <%}%>
+        <hr>
+        <div class="alert alert-info">
+          Ukupno uloženo: <%=ukupan_iznos%> KM
+        </div>
+        <%} else {%>
+          <div class="alert alert-danger">
+            Nemate neisporučenih narudžbi
+          </div>
+        <%}%>
+        <div class="dugmadKontenjer">
+          <button class="btn btn-warning" onclick="zatvoriNarudzbe3()">Zatvori narudžbe</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="profit" class="d-none">
+      Ostvareni profit: <%=profit%> KM<br>
+      <button class="btn btn-warning" onclick="tuglajProfit2()">Zatvori</button>
+    </div>
+
+  <script>
+    function narudzbe(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("narudzbe").classList.toggle("d-none");
+      window.scrollTo(0,document.body.scrollHeight);
+    }
+    function narudzbe2(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("narudzbe2").classList.toggle("d-none");
+      window.scrollTo(0,document.body.scrollHeight);
+    }
+    function narudzbe3(){
+      document.getElementById("dugmeDiv").style.display = "none";
+      document.getElementById("narudzbe3").classList.toggle("d-none");
+      window.scrollTo(0,document.body.scrollHeight);
+    }
+    function tuglajProfit(){
+      document.getElementById("profit").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "none";
+    }
+    function tuglajProfit2(){
+      document.getElementById("profit").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+    function zatvoriNarudzbe(){
+      document.getElementById("narudzbe").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+    function zatvoriNarudzbe2(){
+      document.getElementById("narudzbe2").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+    function zatvoriNarudzbe3(){
+      document.getElementById("narudzbe3").classList.toggle("d-none");
+      document.getElementById("dugmeDiv").style.display = "block";
+    }
+  </script>
+
+  <!-- javascript kod, potreban za tooltip -->
+  <script type="text/javascript">
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+
+  </body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title><%=naziv%></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-search.css' />
+
+    <script>
+      function pretrazi() {
+        let naziv = document.getElementById("searchInput").value;
+        if(naziv === ""){
+          alert("Prazno polje za pretraživanje!");
+          return;
+        }
+        location.assign('/kupac/pretraga/' + naziv);
+      }
+    </script>
+
+    <script>
+      function sortiraj(kriterij) {
+        if(kriterij === 'ime') {
+          var sort_criteria = function (a, b) {
+            return a.innerText.toLowerCase().localeCompare(b.innerText.toLowerCase());
+          }
+        } else if(kriterij === 'opada') {
+          var sort_criteria = function (a, b) {
+            const aa = a.innerText;
+            const bb = b.innerText;
+            var result11 = aa.search("Cijena:");
+            var result12 = aa.search("KM");
+            var result21 = bb.search("Cijena:");
+            var result22 = bb.search("KM");
+            return parseFloat(bb.substring(result21+7, result22)) - parseFloat(aa.substring(result11+7, result12));
+          }
+        } else { // 'raste'
+          var sort_criteria = function (a, b) {
+            const aa = a.innerText;
+            const bb = b.innerText;
+            var result11 = aa.search("Cijena:");
+            var result12 = aa.search("KM");
+            var result21 = bb.search("Cijena:");
+            var result22 = bb.search("KM");
+            return parseFloat(aa.substring(result11+7, result12)) - parseFloat(bb.substring(result21+7, result22));
+          }
+        }
+        var list = $("#artikli > .kartica").get();
+        list.sort(sort_criteria);
+        for (var i = 0; i < list.length; i++) {
+          list[i].parentNode.appendChild(list[i]);
+        }
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-md navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/kupac/pretraga/<%=naziv%>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-eye"></i></a>
+          <span id="tekstPoredSlikeNava">Pretraga</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac">Home</a>
+              </li>
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac/profil">Profil</a>
+              </li>
+              <li id="odjava" class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+              <div style="padding-top: 7px; margin-right: 5px;" class="btn-group">
+                <i id="ikonaKategorije" style="font-size: 24px;" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                </i>
+                <ul class="dropdown-menu">
+                  <li id="pretragaPokat" style="background-color: skyblue;">
+                    <a class="dropdown-item">
+                      Pretraga po kategoriji
+                    </a>
+                  </li>
+                  <%for(let i=0; i<categories.length; i++){%>
+                  <li>
+                    <a class="dropdown-item" href="/kupac/pretraga/kategorija/<%=categories[i].id%>">
+                      <%=categories[i].category_name%>
+                    </a>
+                  </li>
+                  <%}%>
+                </ul>
+              </div>
+              <li id="search" class="elementMenija nav-item">
+                <input id="searchInput" class="nav-link" placeholder="Pretraži shop..">
+              </li>
+              <li id="search2" class="elementMenija nav-item">
+                <i id="searchIkona" class="bi bi-search" onclick="pretrazi()"></i>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <%if(sellers){%>
+    <h3>Pronađene trgovine</h3>
+    <div class="container">
+      <div class="pozadinaKartica row justify-content-center">
+        <%for(let i=0; i<sellers.length; i++){%>
+        <div class="kartica col-md-6 col-xl-3">
+          <div class="card1 card">
+            <img class="card-img-top" alt="slika"
+              <%if(sellers[i].profile_picture){%> src="<%=sellers[i].profile_picture%>" <%} else {%>
+                                                        src="/images/trgovci/web-shop.png" <%}%> >
+            <div class="card-body">
+              <h5 class="card-title"><%=sellers[i].company_name%></h5>
+              <p class="card-text">Grad: <%=sellers[i].headquarters_city%>, ulica: <%=sellers[i].headquarters_street_name%></p>
+            </div>
+            <div class="nazivKompanije" onclick="posjetiTrgovinu('<%=sellers[i].id%>')">Posjeti trgovinu</div>
+          </div>
+        </div>
+        <%}%>
+      </div>
+    </div>
+    <%} else {%>
+      <div class="alert alert-warning">
+        Nije pronađena nijedna slična trgovina
+      </div>
+    <%}%>
+
+    <%if(articles){%>
+    <h3>Pronađeni artikli/usluge</h3>
+    <div class="container">
+      <div id="artikli" class="pozadinaKartica row justify-content-center">
+        <%if(articles.length>1){%>
+        <div style="display: block; margin-right: 5px;" class="btn-group">
+          <i style="float: right; font-size: 24px;" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <span>Sortiraj</span>
+          </i>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" onclick="sortiraj('ime')">Po imenu</a>
+            </li>
+            <li>
+              <a class="dropdown-item" onclick="sortiraj('raste')">Po cijeni <b><span style="font-size: 20px;">&#x2191</span></b></a>
+            </li>
+            <li>
+              <a class="dropdown-item" onclick="sortiraj('opada')">Po cijeni <b><span style="font-size: 20px;">&#x2193</span></b></a>
+            </li>
+          </ul>
+        </div>
+        <%}%>
+        <%for(let i=0; i<articles.length; i++){%>
+        <div class="kartica col-md-6 col-xl-3">
+          <div class="card2 card">
+            <img src=<%=articles[i].picture%> class="card-img-top" alt="slika artikla">
+            <div class="card-body">
+              <h5 class="card-title"><%=articles[i].article_name%></h5>
+              <p class="card-text card-text2"><%=articles[i].description%></p>
+              <span class="preostalo">Preostalo: <%=articles[i].quantity%></span>
+              <span class="cijena">Cijena: <%=articles[i].unit_price%> KM</span><br><br>
+              <div>
+                <%for(let j=1; j<articles[i].kategorije.length; j++){%>
+                <span class="kategorija"><%=articles[i].kategorije[j][1]%></span>
+                <%}%>
+              </div>
+            </div>
+            <div class="nazivKompanije" onclick="posjetiArtikl('<%=articles[i].id%>')">Saznaj više</div>
+          </div>
+        </div>
+        <%}%>
+      </div>
+    </div>
+    <%} else {%>
+      <div class="alert alert-danger">
+        Nije pronađen nijedan sličan artikl
+      </div>
+    <%}%>
+
+    <div id="dugmeKupci">
+      <button id="dugmePravo" class="btn btn-info" onclick="tuglaj()">Prikaži kupce</button>
+    </div>
+
+    <div id="kupci" class="d-none">
+      <%if(buyers){%>
+      <div class="container">
+        <div class="row justify-content-center">
+          <%for(let i=0; i<buyers.length; i++){%>
+          <div class="kartica col-md-6 col-lg-4 col-xl-3">
+            <div class="card3 card">
+              <img src="<%=buyers[i].profile_picture%>" class="card-img-top" alt="profilna kupca">
+              <div class="card-body">
+                <h5 class="card-title"><%=buyers[i].first_name%> <%=buyers[i].last_name%></h5>
+              </div>
+              <div class="nazivKompanije" onclick="posjetiProfil('<%=buyers[i].username%>')">Pogledaj profil</div>
+            </div>
+          </div>
+          <%}%>
+        </div>
+      </div>
+      <%} else {%>
+        <div class="alert alert-info">
+          Nije pronađen nijedan takav kupac
+        </div>
+      <%}%>
+    </div>
+
+    <script>
+      var prikazaniKupci = true;
+      function tuglaj(){
+        document.getElementById("kupci").classList.toggle("d-none");
+        if(prikazaniKupci) document.getElementById("dugmePravo").innerText = "Sakrij kupce";
+        else document.getElementById("dugmePravo").innerText = "Prikaži kupce";
+        prikazaniKupci = !(prikazaniKupci);
+        document.getElementById("kupci").scrollIntoView();
+      }
+      document.getElementById("searchInput").addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          pretrazi();
+        }
+      });
+      function posjetiTrgovinu(id_prodavaca){
+        location.assign('/kupac/prodavac/' + id_prodavaca);
+      }
+      function posjetiProfil(username){
+        location.assign('/kupac/profil/' + username);
+      }
+      function posjetiArtikl(id_artikla){
+        location.assign('/kupac/artikl/' + id_artikla);
+      }
+    </script>
+
+    <!-- javascript kod, potreban za tooltip -->
+    <script type="text/javascript">
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    </script>
+
+  </body>
+</html>

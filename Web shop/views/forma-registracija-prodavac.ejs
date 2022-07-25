@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title>Registruj prodavača</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <link rel='stylesheet' href='/stylesheets/form.css' />
+
+    <script>
+      function provjeriJednakost(){
+        if(document.getElementById("password").value !== document.getElementById("password2").value){
+          document.getElementById("dugme").classList.remove("btn-info");
+          document.getElementById("dugme").classList.add("btn-danger");
+          document.getElementById("dugme").disabled = true;
+
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px red";
+          document.getElementById("password").style.boxShadow = "0 0 10px red";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 1px red";
+          document.getElementById("password2").style.boxShadow = "0 0 7px red";
+        }
+        else{
+          document.getElementById("dugme").classList.remove("btn-danger");
+          document.getElementById("dugme").classList.add("btn-info");
+          document.getElementById("dugme").disabled = false;
+
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px #03C03C";
+          document.getElementById("password").style.boxShadow = "0 0 10px #03C03C";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 2px #03C03C";
+          document.getElementById("password2").style.boxShadow = "0 0 7px #03C03C";
+        }
+      }
+    </script>
+
+    <script>
+      function tuglajSifru(pas, tpas){
+        var togglePassword = document.getElementById(tpas);
+        var password = document.getElementById(pas);
+        togglePassword.classList.toggle('bi-eye');
+        var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+      }
+    </script>
+    <style>
+      #forma{
+        border: solid 3px white;
+        background-color: rgba(0,0,0,0.2);
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>Registruj se kao prodavač!</h1>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="forma" class="col-10 col-sm-8 col-md-6 col-lg-4">
+          <form method="post" action="/registracija-prodavac">
+
+            <div class="form-element">
+              <label for="company_name">Ime firme: </label><br>
+              <input type="text" name="company_name" maxlength="50" required><br>
+            </div>
+
+            <div class="form-element">
+              <label for="telephone_number">Broj telefona: </label><br>
+              <input type="tel" name="telephone_number" maxlength="50" required><br>
+            </div>
+
+            <div class="form-element">
+              <label for="email">Email: </label><br>
+              <input type="email" name="email" maxlength="50" required><br>
+            </div>
+
+            <label id="zaKat">Odaberite kategorije vaše firme</label>
+            <div class="form-element" style="height: 200px; overflow-y: auto;">
+              <%for(let i=0; i<categories.length; i++){%>
+                <input type="checkbox" id="check" name="check" value="<%=categories[i].id%>">
+                <label class="forCheckbox" for="check"><%=categories[i].category_name%></label><br>
+              <%}%>
+            </div>
+
+            <h6>Sjedište firme</h6>
+            <div class="form-element">
+              <label for="headquarters_street_name">Ulica: </label><br>
+              <input type="text" name="headquarters_street_name" maxlength="50" required><br>
+              <label for="headquarters_city">Grad: </label><br>
+              <input type="text" name="headquarters_city" maxlength="50" required><br>
+            </div>
+
+            <h6>Login informacije</h6>
+            <div class="form-element">
+              <label for="username">Username: </label><br>
+              <input type="text" name="username" maxlength="30" required><br>
+              <label for="password">Lozinka: </label><br>
+              <input onkeyup="provjeriJednakost()" type="password" id="password" name="password" minlength="8" maxlength="16" required>
+              <i onclick="tuglajSifru('password', 'togglePassword1')" class="bi bi-eye-slash" id="togglePassword1"></i><br>
+              <label for="password2">Potvrdi lozinku: </label><br>
+              <input onkeyup="provjeriJednakost()" type="password" id="password2" name="password2" minlength="8" maxlength="16" required>
+              <i onclick="tuglajSifru('password2', 'togglePassword2')" class="bi bi-eye-slash" id="togglePassword2"></i><br>
+            </div>
+
+            <div class="submit-button">
+              <button type="submit" id="dugme" class="dugme btn btn-info">Registruj se!</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

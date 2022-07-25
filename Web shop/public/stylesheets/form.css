@@ -1,0 +1,71 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    padding: 20px;
+    height: 100%;
+    background-color: rgba(255,255,255,0);
+    color: white;
+}
+
+h1{
+    margin-top: 10px;
+    text-align: center;
+}
+
+h6{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.form-element{
+    margin: 0 auto;
+    margin-bottom: 7px;
+    width: 100%;
+}
+
+label, input, textarea, select{
+    width: 100%;
+}
+
+.submit-button{
+    margin: 15px auto;
+    text-align: center;
+}
+
+#forma{
+    margin-top: 30px;
+}
+
+option{
+    color: black;
+}
+
+input[type~="checkbox"]{
+    width: 20px;
+}
+
+.forCheckbox{
+    width: 90%;
+}
+
+#status{
+    margin-bottom: 0;
+    padding: 2px 5px;
+    width: 50%;
+    border-radius: 3px;
+    text-align: center;
+    background-color: white;
+}
+
+#zaKat{
+    margin: 10px;
+}
+
+i{
+    margin-left: -30px;
+    color: black;
+    cursor: pointer;
+}

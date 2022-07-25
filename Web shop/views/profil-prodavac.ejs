@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title><%=sellerInfo.company_name%></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-prodavac.css' />
+
+    <script>
+      function provjeriJednakost(){
+        if(document.getElementById("password").value !== document.getElementById("password2").value){
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px red";
+          document.getElementById("password").style.boxShadow = "0 0 10px red";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 1px red";
+          document.getElementById("password2").style.boxShadow = "0 0 7px red";
+        }
+        else{
+          document.getElementById("password").style.outline = "none";
+          document.getElementById("password").style.border = "solid 1px #03C03C";
+          document.getElementById("password").style.boxShadow = "0 0 10px #03C03C";
+          document.getElementById("password2").style.outline = "none";
+          document.getElementById("password2").style.border = "solid 2px #03C03C";
+          document.getElementById("password2").style.boxShadow = "0 0 7px #03C03C";
+        }
+      }
+
+      function tuglajSifru(pas, tpas){
+        var togglePassword = document.getElementById(tpas);
+        var password = document.getElementById(pas);
+        togglePassword.classList.toggle('bi-eye');
+        var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+      }
+    </script>
+
+    <script>
+      function izmjeniProfil(){
+        let info = {
+          company_name: document.getElementById("company_name").value,
+          telephone_number: document.getElementById("telephone_number").value,
+          email: document.getElementById("email").value,
+          headquarters_street_name: document.getElementById("headquarters_street_name").value,
+          headquarters_city: document.getElementById("headquarters_city").value
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/prodavac/urediProfil",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac");
+        });
+      }
+    </script>
+
+    <script>
+      function izmjeni_artikl(id_artikla){
+        var ime = "check" + id_artikla;
+        var niz = [];
+        var cekovi = document.getElementsByClassName(ime);
+        for(let i=0; i<cekovi.length; i++){
+          if(cekovi[i].checked){
+            niz.push(cekovi[i].value);
+          }
+        }
+
+        let info = {
+          id: id_artikla,
+          article_name: document.getElementById("article_name" + id_artikla).value,
+          description: document.getElementById("description" + id_artikla).value,
+          unit_price: document.getElementById("unit_price" + id_artikla).value,
+          quantity: document.getElementById("quantity" + id_artikla).value,
+          check: JSON.stringify(niz)
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/prodavac/urediArtikl",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac");
+        });
+      }
+    </script>
+
+    <script>
+      function izbrisi(id_artikla){
+
+        let text = "Kliknite OK ako želite obrisati vaš artikl/uslugu?";
+        if (confirm(text) !== true) {
+          return;
+        }
+
+        let info = {
+          id: id_artikla
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/prodavac/ukloniArtikl",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac");
+        });
+      }
+    </script>
+
+    <script>
+      function promijeniLozinku(){
+        let info = {
+          password: document.getElementById("password").value,
+          password2: document.getElementById("password2").value,
+        }
+        if(info.password !== info.password2){
+          alert("Šifre se ne poklapaju!");
+          return;
+        } else if (info.password.length < 8){
+          alert("Šifra mora biti minimalno dužine 8!");
+          return;
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/prodavac/promijeniLozinku",
+          data: info,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          location.replace("/prodavac");
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/prodavac" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-person-circle"></i></a>
+          <span id="tekstPoredSlikeNava">Profil</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/prodavac/narudzbe">Narudžbe</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/prodavac/dodajArtikl">Dodaj artikl</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/poruke/poruke">Čat</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="pozadina row justify-content-center" style="background-image: url(<%=sellerInfo.background_picture%>);">
+        <div id="divProfilne" class="col-8 col-sm-6 col-lg-4 col-xl-3">
+          <form action="/prodavac/promijeniPozadinu" method="post" enctype="multipart/form-data">
+            <i class="ikonica bi bi-image" id="dajFajl1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Promijeni pozadinu"></i>
+            <input class="d-none" type="file" name="avatar" id="pozadinska-slika" onchange="form.submit()" /><br>
+          </form>
+          <img id="profilna"src="<%=sellerInfo.profile_picture%>" alt="profilna slika">
+          <form action="/prodavac/promijeniProfilnu" method="post" enctype="multipart/form-data">
+            <i class="ikonica bi bi-camera" id="dajFajl2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Promijeni profilnu"></i>
+            <input class="d-none" type="file" name="avatar" id="profilna-slika" onchange="form.submit()" /><br>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="tabela" class="table-responsive">
+          <table class="table table-dark table-hover">
+
+            <tr>
+              <th>Ime firme</th>
+              <th>Broj telefona</th>
+              <th>Email</th>
+              <th>Ulica sjedišta firme</th>
+              <th>Grad sjedišta firme</th>
+            </tr>
+
+            <tr id="informacije">
+              <td><%=sellerInfo.company_name%></td>
+              <td><%=sellerInfo.telephone_number%></td>
+              <td><%=sellerInfo.email%></td>
+              <td><%=sellerInfo.headquarters_street_name%></td>
+              <td><%=sellerInfo.headquarters_city%></td>
+              <td>
+                <button onclick="prikaziUredjivanje()" class="btn btn-primary">Uredi</button>
+              </td>
+              <td>
+                <button onclick="lozinka()" class="btn btn-warning">Promijeni lozinku</button>
+              </td>
+            </tr>
+
+            <tr id="uredjivanje" class="d-none">
+              <td>
+                <input id="company_name" value="<%=sellerInfo.company_name%>" type="text" name="company_name" maxlength="50" required>
+              </td>
+              <td>
+                <input id="telephone_number" value="<%=sellerInfo.telephone_number%>" type="text" name="telephone_number" maxlength="50" required>
+              </td>
+              <td>
+                <input id="email" value="<%=sellerInfo.email%>" type="text" name="email" maxlength="50" required>
+              </td>
+              <td>
+                <input id="headquarters_street_name" value="<%=sellerInfo.headquarters_street_name%>" type="text" name="headquarters_street_name" maxlength="50" required>
+              </td>
+              <td>
+                <input id="headquarters_city" value="<%=sellerInfo.headquarters_city%>" type="text" name="headquarters_city" maxlength="50" required>
+              </td>
+
+              <td>
+                <button class="btn btn-success" type="button" onclick="izmjeniProfil()">Potvrdi izmjene</button>
+              </td>
+              <td>
+                <button class="btn btn-danger" type="button" onclick="prikaziInfo()">Odustani</button>
+              </td>
+            </tr>
+
+          </table>
+        </div>
+          <div class="col-8 col-sm-6 col-lg-4 col-xl-3">
+            <div id="lozinka" style="display: none;">
+              <div class="form-element2">
+                <label for="password">Nova lozinka: </label><br>
+                <input onkeyup="provjeriJednakost()" type="password" id="password" name="password" minlength="8" maxlength="16" required>
+                <i onclick="tuglajSifru('password', 'togglePassword1')" class="sifra bi bi-eye-slash" id="togglePassword1"></i><br>
+                <label for="password2">Potvrdi lozinku: </label><br>
+                <input onkeyup="provjeriJednakost()" type="password" id="password2" name="password2" minlength="8" maxlength="16" required>
+                <i onclick="tuglajSifru('password2', 'togglePassword2')" class="sifra bi bi-eye-slash" id="togglePassword2"></i><br>
+              </div>
+              <div class="button-element">
+                <button class="btn btn-success" onclick="promijeniLozinku()">Promijeni</button>
+                <button class="btn btn-danger" onclick="odustaniLozinka()">Odustani</button>
+              </div>
+            </div>
+          </div>
+        <div></div>
+        <div id="ocjena" class="col-6">
+          <h6>Ocjena vaših usluga</h6>
+          <%if(ocjena === 0){%>
+            <h6>Niko nije ocijenio vaše usluge</h6>
+            <i class="bi bi-star-fill" id="jedan"></i>
+            <i class="bi bi-star-fill" id="dva"></i>
+            <i class="bi bi-star-fill" id="tri"></i>
+            <i class="bi bi-star-fill" id="cetiri"></i>
+            <i class="bi bi-star-fill" id="pet"></i>
+          <%} else {%>
+          <i class="bi bi-star-fill<%if(ocjena >= 1){%> puna<%}%>" id="jedan"></i>
+          <i class="bi bi-star-fill<%if(ocjena >= 2){%> puna<%}%>" id="dva"></i>
+          <i class="bi bi-star-fill<%if(ocjena >= 3){%> puna<%}%>" id="tri"></i>
+          <i class="bi bi-star-fill<%if(ocjena >= 4){%> puna<%}%>" id="cetiri"></i>
+          <i class="bi bi-star-fill<%if(ocjena >= 5){%> puna<%}%>" id="pet"></i>
+          <%}%>
+        </div>
+
+        <div></div>
+      </div>
+
+    </div>
+
+    <div class="container-fluid">
+      <div id="komentari" class="row justify-content-center">
+        <h2>Komentari</h2>
+        <%for(let i=0; i<comments.length; i++){%>
+        <div class="div_slike_komentara">
+          <img class="slika_komentara" src="<%=comments[i].profile_picture%>">
+        </div>
+        <div class="komentar col-5">
+          <h6 class="nazivKomentatora" onclick="posjetiProfil('<%=comments[i].username%>')"><%=comments[i].first_name%> <%=comments[i].last_name%></h6>
+          <p><%=comments[i].text%></p>
+        </div>
+        <div class="col-12"></div>
+        <%}%>
+        <%if(comments.length === 0) {%>
+          <h6>Nemate nikakvih komentara</h6>
+        <%}%>
+      </div>
+    </div>
+
+    <h2>Vaši artikli i usluge</h2>
+    <div class="container">
+        <div id="artikli" class="row justify-content-center">
+            <%for(let i=0; i<articles.length; i++){%>
+                <div id="default<%=articles[i].id%>" class="kartica col-md-6 col-xl-4">
+                  <div class="card">
+                    <img src="<%=articles[i].picture%>" class="card-img-top" alt="article picture">
+                    <div class="card-body">
+                      <form class="formaSlika" action="/prodavac/artikl/<%=articles[i].id%>/promijeniSliku" method="post" enctype="multipart/form-data">
+                        <i class="ikonica bi bi-camera" id="dajFajl2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Promijeni sliku" onclick="otvoriUcitavanjeFajla('<%=articles[i].id%>')"></i>
+                        <input class="d-none" type="file" name="avatar" id="slikaArtikla<%=articles[i].id%>" onchange="form.submit()" /><br>
+                      </form>
+                      <h5 class="card-title"><%=articles[i].article_name%></h5>
+                      <p class="card-text"><%=articles[i].description%></p>
+                      <span class="preostalo">Preostalo: <%=articles[i].quantity%></span>
+                      <span class="cijena">Cijena: <%=articles[i].unit_price%> KM</span><br><br>
+                      <div class="kategorije">
+                      <%for(let j=1; j<articles[i].kategorije.length; j++){%>
+                        <span class="kategorija" style="float: left;"><%=articles[i].kategorije[j][1]%></span>
+                      <%}%>
+                      </div>
+                    </div>
+
+                    <div class="dugmic">
+                      <button id="dugme<%=articles[i].id%>" class="btn btn-primary" onclick="uredi('<%=articles[i].id%>')">Uredi</button>
+                      <button id="dugmeIzbrisi<%=articles[i].id%>" class="btn btn-danger" onclick="izbrisi('<%=articles[i].id%>')">Ukloni</button>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div id="form<%=articles[i].id%>" class="kartica col-md-6 col-xl-4" style="display: none;">
+                  <div class="card card2">
+                    <img src="<%=articles[i].picture%>" class="card-img-top" alt="...">
+                    <div class="form-element">
+                      <label for="article_name">Ime: </label><br>
+                      <input id="article_name<%=articles[i].id%>" type="text" name="article_name" value="<%=articles[i].article_name%>" maxlength="50" required><br>
+                    </div>
+                    <div class="form-element">
+                      <label for="description">Opis: </label><br>
+                      <textarea id="description<%=articles[i].id%>" type="text" name="description" maxlength="300" required><%=articles[i].description%></textarea><br>
+                    </div>
+                    <div class="za-broj">
+                      <label for="quantity">Preostalo: </label><br>
+                      <button onclick="smanji('quantity<%=articles[i].id%>')"> - </button>
+                      <input id="quantity<%=articles[i].id%>" type="number" name="quantity" value="<%=articles[i].quantity%>" min="0">
+                      <button onclick="povecaj('quantity<%=articles[i].id%>')"> + </button>
+                    </div>
+                    <div class="za-broj">
+                      <label for="unit_price">Cijena: </label><br>
+                      <button onclick="smanji('unit_price<%=articles[i].id%>')"> - </button>
+                      <input id="unit_price<%=articles[i].id%>" type="number" name="unit_price" value="<%=articles[i].unit_price%>" step="0.001" min="0" required>
+                      <button onclick="povecaj('unit_price<%=articles[i].id%>')"> + </button>
+                      <br>
+                    </div>
+                    <div class="zaKat form-element">
+                      <label id="zaKat">Uredite kategorije: </label><br>
+                      <%for(let j=0; j<categories.length; j++){%>
+                        <input type="checkbox" class="check<%=articles[i].id%>" name="check" value="<%=categories[j].id%>"
+                        <%for(let k=1; k<articles[i].kategorije.length; k++){
+                          if(articles[i].kategorije[k][0] == categories[j].id){%>
+                            checked
+                          <%}%>
+                        <%}%>
+                        >
+                        <label class="forCheckbox" for="check"><%=categories[j].category_name%></label><br>
+                      <%}%>
+                    </div>
+                    <div class="button-element">
+                      <button class="btn btn-success" onclick="izmjeni_artikl('<%=articles[i].id%>')">Potvrdi izmjene</button>
+                      <button class="btn btn-danger" onclick="odustani('<%=articles[i].id%>')">Odustani</button>
+                    </div>
+                  </div>
+                </div>
+
+            <%}%>
+          <%if(articles.length === 0){%>
+            <div style="text-align: center;" class="alert alert-danger col-12 col-lg-8 col-xl-7">
+              Nemate niti jedan artikl/uslugu!
+            </div>
+          <%}%>
+        </div>
+    </div>
+
+    <script>
+      function prikaziUredjivanje(){
+        document.getElementById("informacije").classList.toggle("d-none");
+        document.getElementById("uredjivanje").classList.toggle("d-none");
+      }
+      function prikaziInfo(){
+        document.getElementById("uredjivanje").classList.toggle("d-none");
+        document.getElementById("informacije").classList.toggle("d-none");
+      }
+    </script>
+
+    <script>
+      function uredi(id_artikla){
+        let default1 = "default" + id_artikla;
+        let form1 = "form" + id_artikla;
+        document.getElementById(default1).style.display = "none";
+        document.getElementById(form1).style.display = "block";
+      }
+      function odustani(id_artikla){
+        let form2 = "form" + id_artikla;
+        let default2 = "default" + id_artikla;
+        document.getElementById(form2).style.display = "none";
+        document.getElementById(default2).style.display = "block";
+      }
+    </script>
+
+    <script>
+      function povecaj(id_input){
+        let inputPolje = document.getElementById(id_input);
+        inputPolje.value = parseInt(inputPolje.value) + 1;
+      }
+      function smanji(id_input){
+        let inputPolje = document.getElementById(id_input);
+        if(parseInt(inputPolje.value) < 1) return;
+        inputPolje.value = parseInt(inputPolje.value) - 1;
+      }
+      function otvoriUcitavanjeFajla(id_artikla) {
+        document.getElementById('slikaArtikla' + id_artikla).click();
+      };
+      document.getElementById('dajFajl1').onclick = function() {
+        document.getElementById('pozadinska-slika').click();
+      };
+    </script>
+
+    <script>
+      document.getElementById('dajFajl1').onclick = function() {
+        document.getElementById('pozadinska-slika').click();
+      };
+      document.getElementById('dajFajl2').onclick = function() {
+        document.getElementById('profilna-slika').click();
+      };
+      function lozinka(){
+        document.getElementById("tabela").classList.toggle("d-none");
+        document.getElementById("lozinka").style.display = "block";
+      }
+      function odustaniLozinka(){
+        document.getElementById("lozinka").style.display = "none";
+        document.getElementById("tabela").classList.toggle("d-none");
+      }
+    </script>
+
+
+    <!-- javascript kod, potreban za tooltip -->
+    <script type="text/javascript">
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    </script>
+
+  </body>
+</html>

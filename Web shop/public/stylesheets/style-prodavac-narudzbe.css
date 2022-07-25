@@ -1,0 +1,234 @@
+html{
+	height: 100%;
+	background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+	background-color: rgba(255,255,255,0);
+	color: white;
+}
+
+#tekstPoredSlikeNava{
+	margin: 0px 32px 0px 16px;
+	color: white;
+	font-weight: 700;
+	font-size: 175%;
+}
+
+.navLink{
+	text-align: center;
+	color: white;
+	font-size: 130%;
+}
+
+.navLink:hover{
+	border-radius: 1px;
+	background-color: #3399FF;
+	color: white;
+}
+
+.pozadina{
+	margin: 1px auto;
+	height: 450px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	align-items: flex-end;
+}
+
+#divProfilne{
+	display: flex;
+	align-items: flex-end;
+}
+
+#profilna{
+	border: solid 3px white;
+	border-radius: 50%;
+	outline: solid 2px black;
+	width: 250px;
+	height: 250px;
+	flex-shrink: 0;
+	margin-bottom: -60px;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.ikonica{
+	color: black;
+	font-size: 28px;
+	background-color: rgba(255,255,255,0.5);
+	padding: 0 3px;
+	border-radius: 10px;
+	margin-bottom: -50px;
+}
+
+.ikonica:hover{
+	background-color: rgb(255,255,255);
+	cursor: pointer;
+}
+
+.form-element{
+	margin: 5px auto;
+	width: 100%;
+}
+
+input, label{
+	width: 100%;
+}
+
+.sifra{
+	margin-left: -30px;
+	color: black;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.button-element{
+	text-align: center;
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+
+#dugmeDiv{
+	text-align: center;
+}
+
+.kategorija{
+	text-align: center;
+	background-color: white;
+	border: solid 1px black;
+	border-radius: 3px;
+	color: black;
+	font-size: 20px;
+}
+
+.oznaka{
+	float: right;
+	margin-right: 7px;
+}
+
+.kategorija:hover{
+	background-color: black;
+	height: 36px;
+	font-size: 24px;
+	color: white;
+}
+
+.oznaka1{
+	color: orangered;
+	opacity: 0.7;
+}
+
+.oznaka2{
+	color: green;
+}
+
+.oznaka1:hover{
+	color: red;
+}
+
+.oznaka2:hover{
+	color: limegreen;
+}
+
+h3{
+	text-align: center;
+	margin-top: 7px;
+}
+
+.btn{
+	margin-top: 5px;
+	margin-bottom: 7px;
+}
+
+#narudzbe, #narudzbe2, #narudzbe3{
+	background-color: #222222;
+	padding: 5px;
+}
+
+.x{
+	float: right;
+	margin-top: -12px;
+	margin-right: -7px;
+	color: firebrick;
+	cursor: pointer;
+}
+
+.x:hover{
+	color: red;
+	border-radius: 10px;
+	background-color: white;
+}
+
+.artikl{
+	border: solid 2px white;
+	padding: 15px 10px 15px 20px;
+}
+
+.link_ime_artikla{
+	color: #3399FF;
+}
+
+.slika{
+	border: solid 2px white;
+	border-radius: 5px;
+	width: 300px;
+	float: left;
+	margin-right: 50px;
+}
+
+.inputKolicina{
+	width: 100px;
+	color: black;
+}
+
+@media screen and (max-width: 768px){
+	.slika{
+		width: 200px;
+	}
+}
+
+.kolicina{
+
+}
+
+.cijena_artikla{
+
+}
+
+.dugmadKontenjer{
+	margin: 0px 5px 10px 5px;
+	text-align: center;
+}
+
+.alert{
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.naslov{
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+hr{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.prviAlert{
+	margin-top: 5px;
+}
+
+#profit{
+	text-align: center;
+	background-color: white;
+	color: black;
+	border-radius: 5px;
+	width: 300px;
+	margin: 0 auto;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	padding: 5px;
+	font-size: 22px;
+}

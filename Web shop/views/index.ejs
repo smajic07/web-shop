@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="bs" style="background-image: url(/images/web-shop-cover-slika.png);">
+  <head>
+
+    <title>Web shop</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script>
+      function myFunction1(){
+        location.assign('http://localhost:3000/registracija-prodavac');
+      }
+      function myFunction2(){
+        location.assign('http://localhost:3000/registracija-kupac');
+      }
+      function myFunction3(){
+        location.assign('http://localhost:3000/login');
+      }
+    </script>
+
+    <style>
+      #gazda{
+        color: white;
+        width: 400px;
+        margin: auto;
+        border: solid 2px black;
+        background-color: rgba(0,0,0,0.3);
+        margin-top: 150px;
+        font-size: 100%;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <div id="gazda">
+      <div id="glavni">
+        <h1>Web shop</h1>
+        <div style="font-weight: bold;">Registracija i prijava</div>
+      </div>
+      <a onclick="myFunction1()">Registruj prodavača</a>
+      <a onclick="myFunction2()">Registruj kupca</a>
+      <a onclick="myFunction3()">Prijavi se</a>
+    </div>
+
+
+  </body>
+</html>

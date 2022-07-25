@@ -1,0 +1,231 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    background-color: rgba(255,255,255,0);
+    color: white;
+}
+
+#heder{
+    margin-bottom: 20px;
+}
+
+i{
+    color: white;
+    font-size: 24px;
+}
+
+#tekstPoredSlikeNava{
+    margin: 0px 32px 0px 24px;
+    color: white;
+    font-weight: 700;
+    font-size: 175%;
+}
+
+.navLink{
+    text-align: center;
+    color: white;
+    font-size: 130%;
+}
+
+.navLink:hover{
+    border-radius: 1px;
+    background-color: #3399FF;
+    color: white;
+}
+
+h3{
+    margin: 30px 0 10px 0;
+    text-align: center;
+}
+
+.pozadinaKartica{
+    padding: 10px;
+}
+
+.kartica{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card1{
+    border: 3px solid black;
+    background: #222;
+    color: rgba(250, 250, 250);
+    height: 350px;
+}
+
+.card2{
+    border: 3px solid black;
+    background: #222;
+    color: rgba(250, 250, 250);
+    height: 450px;
+}
+
+.card3{
+    border: 3px solid black;
+    background: #222;
+    color: rgba(250, 250, 250);
+    height: 400px;
+    text-align: center;
+}
+
+.card-text{
+    color: rgba(250, 250, 250, 0.6);
+}
+
+.card-text2{
+    height: 70px;
+    overflow-y: auto;
+}
+
+.preostalo{
+    color: beige;
+    float: left;
+}
+
+.preostalo:hover{
+    color: white;
+}
+
+.cijena{
+    margin-right: 5px;
+    color: limegreen;
+    float: right;
+}
+
+.cijena:hover{
+    color: lime;
+}
+
+.kategorija{
+    background-color: yellow;
+    border: none;
+    color: black;
+    padding: 3px;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-top: 3px;
+    float: left;
+}
+
+.nazivKompanije{
+    text-align: center;
+    background-color: deepskyblue;
+    border: solid 1px black;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nazivKompanije:hover{
+    background-color: dodgerblue;
+}
+
+#odjava{
+    margin-right: 5px;
+}
+
+#searchInput{
+    margin: auto;
+    height: 30px;
+    color: black;
+    margin-top: 10px;
+}
+
+#search2{
+    margin-top: 10px;
+    text-align: center;
+}
+
+#ikonaKategorije:hover {
+    cursor: pointer;
+    color: deepskyblue;
+}
+
+#searchIkona{
+    margin-left: 5px;
+    color: white;
+    font-size: 20px;
+}
+
+#searchIkona:hover{
+    cursor: pointer;
+    color: deepskyblue;
+}
+
+#dugmeKupci{
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#dugmePravo{
+    margin-bottom: 15px;
+    margin-top: 25px;
+}
+
+.alert{
+    text-align: center;
+}
+
+@media screen and (min-width: 1200px) {
+    .card1{
+        height: 325px;
+    }
+    .card2{
+        height: 500px;
+    }
+    .card1 .card-img-top{
+        height: 180px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .card2{
+        height: 550px;
+    }
+    .card1 .card-img-top{
+        height: 200px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .card2{
+        height: 500px;
+    }
+    .card3{
+        height: 475px;
+    }
+    .card1 .card-img-top{
+        height: 180px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .card1{
+        height: 400px;
+    }
+    .card2{
+        height: 600px;
+    }
+    .card3{
+        height: 625px;
+    }
+    .card1 .card-img-top{
+        height: 230px;
+    }
+    #ikonaKategorije {
+        margin: auto;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .card1{
+        height: 400px;
+    }
+    .card1 .card-img-top{
+        height: 230px;
+    }
+}

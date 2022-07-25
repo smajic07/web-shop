@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title>Prijava</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <link rel='stylesheet' href='/stylesheets/form.css' />
+
+    <script>
+      function tuglajSifru(){
+        var togglePassword = document.getElementById("togglePassword");
+        var password = document.getElementById("password");
+        togglePassword.classList.toggle('bi-eye');
+        var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+      }
+    </script>
+
+    <style>
+      #forma{
+        border: solid 3px white;
+        background-color: rgba(0,0,0,0.2);
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <h1>Prijavi se!</h1>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="forma" class="col-10 col-sm-8 col-md-6 col-lg-4">
+          <form method="post" action="/login">
+
+            <div class="form-element">
+              <label for="username">Username: </label><br>
+              <input type="text" name="username" required><br>
+            </div>
+
+            <div class="form-element">
+              <label for="password">Lozinka: </label><br>
+              <input type="password" id="password" name="password" minlength="8" maxlength="16" required>
+              <i onclick="tuglajSifru()" class="bi bi-eye-slash" id="togglePassword"></i><br>
+            </div>
+
+            <div class="submit-button">
+              <button type="submit" class="btn btn-info">Prijavi se!</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

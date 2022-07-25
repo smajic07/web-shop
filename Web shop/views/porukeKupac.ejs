@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title>Poruke</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/poruke.css' />
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var usernameReciever, usRID;
+      var stariDiv, prviPut = true;
+      var brojPoruka;
+      function daj_poruke(username2, id) {
+        usernameReciever = username2;
+        usRID = id;
+        $.ajax({
+          url: "/poruke/poruke/" + id,
+          type: "POST",
+          success: function (result) {
+            messages = result.messages;
+            console.log(messages);
+            let trenutne_poruke = document.createElement('div');
+            trenutne_poruke.classList.toggle("col-11");
+            trenutne_poruke.classList.toggle("col-sm-10");
+            trenutne_poruke.classList.toggle("col-lg-8");
+            if(prviPut){
+              let naslov = document.getElementById('pocetni');
+              naslov.parentNode.removeChild(naslov);
+            }
+            if(!prviPut){
+              let divInputaa = document.getElementById('divInputa');
+              divInputaa.parentNode.removeChild(divInputaa);
+              let privr = document.getElementById(stariDiv);
+              privr.parentNode.removeChild(privr);
+            }
+            stariDiv = 'tp' + username2;
+            trenutne_poruke.setAttribute('id', stariDiv);
+            prviPut = false;
+            if(messages.length == 0){
+              brojPoruka = 0;
+              const info = document.createElement('div');
+              info.setAttribute('id', 'nemaPoruka');
+              info.classList.toggle("info");
+              info.innerHTML = 'Nemate nikakvih poruka sa ovim korisnikom!';
+              trenutne_poruke.append(info);
+            }
+            else {
+              trenutne_poruke.classList.toggle("trenutne_poruke");
+              brojPoruka = 1; // samo da nije 0...
+              for (let i = 0; i < messages.length; i++) {
+                const poruka = document.createElement('span');
+                poruka.classList.toggle("poruka");
+                poruka.innerHTML = messages[i].text;
+                if (messages[i].primalac == usernameReciever) {
+                  poruka.style.float = "left";
+                  poruka.style.backgroundColor = "aqua";
+                } else {
+                  poruka.style.float = "right";
+                  poruka.style.backgroundColor = "pink";
+                }
+                trenutne_poruke.append(poruka);
+                trenutne_poruke.append(document.createElement('br'));
+                trenutne_poruke.append(document.createElement('br'));
+              }
+            }
+
+            const divInputa = document.createElement('div');
+            divInputa.setAttribute('id', 'divInputa');
+            divInputa.classList.toggle('col-12');
+            const inputPoruke = document.createElement('input');
+            inputPoruke.setAttribute('type', 'text');
+            inputPoruke.setAttribute('id', 'tekst');
+            inputPoruke.setAttribute('placeholder', 'Unesite poruku..');
+            divInputa.append(inputPoruke);
+            const inputDugme = document.createElement('input');
+            inputDugme.setAttribute('type', 'button');
+            inputDugme.setAttribute('id', 'dugme');
+            inputDugme.setAttribute('value', 'Pošalji');
+            inputDugme.setAttribute('onclick', 'posalji()');
+            inputDugme.classList.toggle('btn');
+            inputDugme.classList.toggle('btn-info');
+            divInputa.append(inputDugme);
+
+            trenutne_poruke.append(divInputa);
+            document.getElementById('red').append(trenutne_poruke);
+
+            trenutne_poruke.scrollTop = trenutne_poruke.scrollHeight - trenutne_poruke.clientHeight;
+
+          }
+        });
+      }
+    </script>
+
+  </head>
+  <body onload="setujUsername('<%=korisnik.username%>', '<%=korisnik.id%>')">
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/poruke/poruke" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-chat"></i></a>
+          <span id="tekstPoredSlikeNava">Čat</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/kupac">Home</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/kupac/profil">Profil</a>
+              </li>
+              <li class="elementMenija" class="nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div id="red" class="row justify-content-center">
+        <h2 id="pocetni" style="text-align: center;">Kliknite na korisnika da biste čatali</h2>
+        <div id="listaUsera" class="col-10 col-sm-8 col-lg-4">
+          <div>Kupci: </div>
+          <%for(let i=0; i<buyers.length; i++){%>
+            <div id="user<%=buyers[i].username%>" class="divUsera kupac" onclick="daj_poruke('<%=buyers[i].username%>', '<%=buyers[i].users_id%>')"><%=buyers[i].first_name%> <%=buyers[i].last_name%></div>
+          <%}%>
+          <div>Prodavači: </div>
+          <%for(let i=0; i<sellers.length; i++){%>
+            <div id="user<%=sellers[i].username%>" class="divUsera prodavac" onclick="daj_poruke('<%=sellers[i].username%>', '<%=sellers[i].users_id%>')"><%=sellers[i].company_name%></div>
+          <%}%>
+          <div>Admini: </div>
+          <%for(let i=0; i<admins.length; i++){%>
+            <div id="user<%=admins[i].username%>" class="divUsera admin" onclick="daj_poruke('<%=admins[i].username%>', '<%=admins[i].id%>')"><%=admins[i].username%></div>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var usernameSender, usSID;
+      function setujUsername(username, id){
+        usernameSender = username;
+        usSID = id;
+      }
+      var socket = io.connect('ws://localhost:3000');
+      socket.on('poruka', function (d) {
+        d = JSON.parse(d);
+        console.log(d);
+        if(brojPoruka === 0){
+          document.getElementById(stariDiv).classList.toggle("trenutne_poruke");
+        }
+        let nemaPoru = document.getElementById('nemaPoruka');
+        if(nemaPoru) nemaPoru.parentNode.removeChild(nemaPoru);
+
+        let trenutne_poruke = document.getElementById(stariDiv);
+        if(stariDiv === 'tp' + d.usernameS){
+          let privremeeni = document.getElementById('divInputa');
+          privremeeni.parentNode.removeChild(privremeeni);
+          const poruka = document.createElement('span');
+          poruka.classList.toggle("poruka");
+          poruka.innerHTML = d.tekst;
+          poruka.style.float = "right";
+          poruka.style.backgroundColor = "pink";
+          trenutne_poruke.append(poruka);
+          trenutne_poruke.append(document.createElement('br'));
+          trenutne_poruke.append(document.createElement('br'));
+
+          const divInputa = document.createElement('div');
+          divInputa.setAttribute('id', 'divInputa');
+          divInputa.classList.toggle('col-12');
+          const inputPoruke = document.createElement('input');
+          inputPoruke.setAttribute('type', 'text');
+          inputPoruke.setAttribute('id', 'tekst');
+          inputPoruke.setAttribute('placeholder', 'Unesite poruku..');
+          divInputa.append(inputPoruke);
+          const inputDugme = document.createElement('input');
+          inputDugme.setAttribute('type', 'button');
+          inputDugme.setAttribute('id', 'dugme');
+          inputDugme.setAttribute('value', 'Pošalji');
+          inputDugme.setAttribute('onclick', 'posalji()');
+          inputDugme.classList.toggle('btn');
+          inputDugme.classList.toggle('btn-info');
+          divInputa.append(inputDugme);
+          trenutne_poruke.append(divInputa);
+
+          trenutne_poruke.scrollTop = trenutne_poruke.scrollHeight - trenutne_poruke.clientHeight;
+
+        }
+        else{ // ako nije otvoren čat trenutno sa tom osobom od koje dolazi poruka
+          const ikonica = document.createElement('i');
+          ikonica.classList.toggle('bi');
+          ikonica.classList.toggle('bi-bell-fill');
+          document.getElementById('user'+d.usernameS).appendChild(ikonica);
+          document.getElementById('user'+d.usernameS).style.backgroundColor = "lime";
+        }
+      });
+    </script>
+
+  <script>
+    function posalji(){
+      if(brojPoruka === 0){
+        document.getElementById(stariDiv).classList.toggle("trenutne_poruke");
+      }
+      let nemaPoru = document.getElementById('nemaPoruka');
+      if(nemaPoru) nemaPoru.parentNode.removeChild(nemaPoru);
+
+      let tekst = document.getElementById('tekst').value;
+
+      let trenutne_poruke = document.getElementById(stariDiv);
+      if(stariDiv === 'tp' + usernameReciever){
+        let privremeeni = document.getElementById('divInputa');
+        privremeeni.parentNode.removeChild(privremeeni);
+        const poruka = document.createElement('span');
+        poruka.classList.toggle("poruka");
+        poruka.innerHTML = tekst;
+        poruka.style.float = "left";
+        poruka.style.backgroundColor = "aqua";
+        trenutne_poruke.append(poruka);
+        trenutne_poruke.append(document.createElement('br'));
+        trenutne_poruke.append(document.createElement('br'));
+
+        const divInputa = document.createElement('div');
+        divInputa.setAttribute('id', 'divInputa');
+        divInputa.classList.toggle('col-12');
+        const inputPoruke = document.createElement('input');
+        inputPoruke.setAttribute('type', 'text');
+        inputPoruke.setAttribute('id', 'tekst');
+        inputPoruke.setAttribute('placeholder', 'Unesite poruku..');
+        divInputa.append(inputPoruke);
+        const inputDugme = document.createElement('input');
+        inputDugme.setAttribute('type', 'button');
+        inputDugme.setAttribute('id', 'dugme');
+        inputDugme.setAttribute('value', 'Pošalji');
+        inputDugme.setAttribute('onclick', 'posalji()');
+        inputDugme.classList.toggle('btn');
+        inputDugme.classList.toggle('btn-info');
+        divInputa.append(inputDugme);
+        trenutne_poruke.append(divInputa);
+
+        trenutne_poruke.scrollTop = trenutne_poruke.scrollHeight - trenutne_poruke.clientHeight;
+
+      }
+      socket.emit('klijent_salje_poruku', { usSID: usSID, usRID: usRID, usernameS: usernameSender, usernameR: usernameReciever, tekst: tekst });
+    }
+  </script>
+
+    <!-- javascript kod, potreban za tooltip -->
+    <script type="text/javascript">
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    </script>
+
+  </body>
+</html>

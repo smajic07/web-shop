@@ -1,0 +1,33 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    margin: 0;
+    color: white;
+}
+
+#glavni{
+    padding: 50px;
+    text-align: center;
+    font-size: 150%;
+}
+
+a{
+    display: block;
+    margin: 10px auto;
+    padding-top: 5px;
+    text-align: center;
+    width: 200px;
+    height: 25px;
+    text-decoration: none;
+    background-color: deepskyblue;
+    border: solid 1px whitesmoke;
+    cursor: pointer;
+}
+
+a:hover{
+    background-color: white;
+    color: deepskyblue;
+}

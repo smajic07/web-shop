@@ -1,0 +1,64 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    background-color: rgba(255,255,255,0);
+    color: white;
+}
+
+#heder{
+    margin-bottom: 20px;
+}
+
+i{
+    color: white;
+    font-size: 24px;
+}
+
+i:hover{
+    padding: 2px 5px;
+    border-radius: 5px;
+    background-color: white;
+    color: #3399FF;
+}
+
+#tekstPoredSlikeNava{
+    margin: 0px 32px 0px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 175%;
+}
+
+.navLink{
+    text-align: center;
+    color: white;
+    font-size: 130%;
+}
+
+.navLink:hover{
+    border-radius: 1px;
+    background-color: #3399FF;
+    color: white;
+}
+
+#okolo{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    overflow-x: scroll;
+}
+
+.dugme{
+    display: block;
+    margin: auto;
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.status{
+    text-align: center;
+}

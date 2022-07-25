@@ -1,0 +1,247 @@
+html{
+    height: 100%;
+    background: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%) fixed;
+}
+
+body{
+    background-color: rgba(255,255,255,0);
+    color: white;
+}
+
+i{
+    color: white;
+    font-size: 24px;
+}
+
+#tekstPoredSlikeNava{
+    margin: 0px 32px 0px 24px;
+    color: white;
+    font-weight: 700;
+    font-size: 175%;
+}
+
+.navLink{
+    text-align: center;
+    color: white;
+    font-size: 130%;
+}
+
+.navLink:hover{
+    border-radius: 1px;
+    background-color: #3399FF;
+    color: white;
+}
+
+h3{
+    margin: 30px 0 10px 0;
+    text-align: center;
+}
+
+.pozadinaKartica{
+    padding: 10px;
+    padding-bottom: 0;
+}
+
+.kartica{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card{
+    border: 3px solid black;
+    background: #222;
+    color: rgba(250, 250, 250);
+}
+
+.card-text{
+    color: rgba(250, 250, 250, 0.6);
+}
+
+.preostalo{
+    color: beige;
+    float: left;
+}
+
+.preostalo:hover{
+    color: white;
+}
+
+.cijena{
+    margin-right: 5px;
+    color: limegreen;
+    float: right;
+}
+
+.cijena:hover{
+    color: lime;
+}
+
+.kategorija{
+    background-color: yellow;
+    border: none;
+    color: black;
+    padding: 3px;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-top: 3px;
+    float: left;
+}
+
+.kategorija:hover{
+    background-color: gold;
+    cursor: pointer;
+}
+
+.nazivKompanije{
+    text-align: center;
+    background-color: deepskyblue;
+    border: solid 1px black;
+    color: white;
+    font-weight: bold;
+}
+
+.nazivKompanije:hover{
+    cursor: pointer;
+    background-color: #009ffd;
+}
+
+#odjava{
+    margin-right: 5px;
+}
+
+#searchInput{
+    margin: auto;
+    height: 30px;
+    color: black;
+    margin-top: 10px;
+}
+
+#search2{
+    margin-top: 10px;
+    text-align: center;
+}
+
+#searchIkona{
+    margin-left: 5px;
+    color: white;
+    font-size: 20px;
+}
+
+#searchIkona:hover{
+    cursor: pointer;
+    color: limegreen;
+}
+
+#sadrzaj_narudzbe{
+    background-color: #222222;
+    padding: 5px;
+}
+
+.x{
+    float: right;
+    margin-top: -12px;
+    margin-right: -7px;
+    color: firebrick;
+    cursor: pointer;
+}
+
+.x:hover{
+    color: red;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.artikl{
+    border: solid 2px white;
+    padding: 15px 10px 15px 20px;
+}
+
+.link_ime_artikla{
+    color: #3399FF;
+}
+
+.link_ime_artikla:hover{
+    cursor: pointer;
+    color: dodgerblue;
+}
+
+.slika{
+    border: solid 2px white;
+    border-radius: 5px;
+    width: 300px;
+    float: left;
+    margin-right: 50px;
+}
+
+.inputKolicina{
+    width: 100px;
+}
+
+@media screen and (max-width: 768px){
+    .slika{
+        width: 200px;
+    }
+}
+
+.kolicina{
+
+}
+
+.cijena_artikla{
+
+}
+
+.dugmadKontenjer{
+    margin: 0px 5px 10px 5px;
+    text-align: center;
+}
+
+.dodajZnak, .otvoriZnak, .naruciZnak, .zatvoriZnak{
+    font-size: 20px;
+    padding: 0 5px;
+}
+
+.otvoriZnak, .zatvoriZnak{
+    color: black;
+}
+
+.alert{
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#ocjena{
+    padding-top: 10px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    background-color: rgba(255,255,255,0.3);
+    height: 100px;
+}
+
+.puna{
+    color: gold;
+}
+
+#jedan, #dva, #tri, #cetiri, #pet{
+    cursor: pointer;
+}
+
+.zv{
+    font-size: 24px;
+}
+
+#ocjena1{
+    padding-top: 10px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 32px;
+    background-color: rgba(255,255,255,0.3);
+    height: 100px;
+}
+
+.dugmadKontenjer button{
+    margin-bottom: 20px;
+}

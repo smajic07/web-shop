@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title><%=sellerInfo.company_name%></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-prodavac-pregled.css' />
+
+    <script>
+      function promijeni(seller_id, id_kategorije){
+        let info = {
+          id_kategorije: id_kategorije,
+          seller_id: seller_id
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/kupac/prodavac/dajArtiklePoKategoriji",
+          data: info,
+          type: 'POST',
+          success: function(result) {
+            articles = result.artikliS;
+            const artikli = document.getElementById("artikli");
+            artikli.innerHTML = "";
+            for(let i=0; i<articles.length; i++){
+              const div = document.createElement("div");
+              div.classList.toggle("kartica");
+              div.classList.toggle("col-md-6");
+              div.classList.toggle("col-xl-4");
+              div.innerHTML = `
+              <div class="card">
+                <img src="`+articles[i].picture+`" class="card-img-top" alt="article picture">
+                  <div id="def`+articles[i].id+`" class="card-body">
+                    <h5 class="card-title">`+articles[i].article_name+`</h5>
+                    <p class="card-text">`+articles[i].description+`</p>
+                    <span class="preostalo">Preostalo: ` +articles[i].quantity+`</span>
+                    <span class="cijena">Cijena: `+articles[i].unit_price+` KM</span><br><br>
+                  </div>
+                  <div class="nazivKompanije" onclick="posjetiArtikl('`+articles[i].id+`')">Saznaj više</div>
+              </div>
+            </div>`;
+              artikli.append(div);
+            }
+            if(articles.length === 0){
+              const alert = document.createElement("div");
+              alert.style.textAlign = "center";
+              alert.classList.toggle("alert");
+              alert.classList.toggle("alert-danger");
+              alert.classList.toggle("col-12");
+              alert.classList.toggle("col-lg-8");
+              alert.classList.toggle("col-xl-7");
+              alert.innerText = "Prodavač trenutno nema niti jedan artikl sa tom kategorijom";
+              artikli.append(alert);
+            }
+          }
+        });
+      }
+      var glavna = 0;
+      function ocijeni(ocjena, seller_id){
+        let info = {
+          ocjena: ocjena,
+          seller_id: seller_id
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/kupac/ocijeniProdavaca",
+          data: info,
+          type: 'POST',
+          success: function(result) {
+            document.getElementById("ocjena").removeAttribute("onmouseleave");
+            document.getElementById("jedan").removeAttribute("onmouseover");
+            document.getElementById("jedan").removeAttribute("onclick");
+            document.getElementById("jedan").style.cursor = "default";
+            document.getElementById("dva").removeAttribute("onmouseover");
+            document.getElementById("dva").removeAttribute("onclick");
+            document.getElementById("dva").style.cursor = "default";
+            document.getElementById("tri").removeAttribute("onmouseover");
+            document.getElementById("tri").removeAttribute("onclick");
+            document.getElementById("tri").style.cursor = "default";
+            document.getElementById("cetiri").removeAttribute("onmouseover");
+            document.getElementById("cetiri").removeAttribute("onclick");
+            document.getElementById("cetiri").style.cursor = "default";
+            document.getElementById("pet").removeAttribute("onmouseover");
+            document.getElementById("pet").removeAttribute("onclick");
+            document.getElementById("pet").style.cursor = "default";
+            let izbaciti = document.getElementById("ocijeniPrvi");
+            if(izbaciti) {
+              izbaciti.remove();
+            }
+            let promijeniti = document.getElementById("promijeniti");
+            if(promijeniti) {
+              promijeniti.remove();
+            }
+            if (parseInt(ocjena) >= 1) {
+              document.getElementById("jedan").style.color = "gold";
+            } else {
+              document.getElementById("jedan").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 2) {
+              document.getElementById("dva").style.color = "gold";
+            } else {
+              document.getElementById("dva").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 3) {
+              document.getElementById("tri").style.color = "gold";
+            } else {
+              document.getElementById("tri").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 4) {
+              document.getElementById("cetiri").style.color = "gold";
+            } else {
+              document.getElementById("cetiri").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 5) {
+              document.getElementById("pet").style.color = "gold";
+            } else {
+              document.getElementById("pet").style.color = "white";
+            }
+            const tick = document.createElement("i");
+            tick.style.color = "lime";
+            tick.classList.toggle("bi");
+            tick.classList.toggle("bi-check2");
+            document.getElementById("ocjena").append(tick);
+          }
+        });
+      }
+    </script>
+
+    <script>
+      function sortiraj(kriterij) {
+        if(kriterij === 'ime') {
+          var sort_criteria = function (a, b) {
+            return a.innerText.toLowerCase().localeCompare(b.innerText.toLowerCase());
+          }
+        } else if(kriterij === 'opada') {
+          var sort_criteria = function (a, b) {
+            const aa = a.innerText;
+            const bb = b.innerText;
+            var result11 = aa.search("Cijena:");
+            var result12 = aa.search("KM");
+            var result21 = bb.search("Cijena:");
+            var result22 = bb.search("KM");
+            return parseFloat(bb.substring(result21+7, result22)) - parseFloat(aa.substring(result11+7, result12));
+          }
+        } else { // 'raste'
+          var sort_criteria = function (a, b) {
+            const aa = a.innerText;
+            const bb = b.innerText;
+            var result11 = aa.search("Cijena:");
+            var result12 = aa.search("KM");
+            var result21 = bb.search("Cijena:");
+            var result22 = bb.search("KM");
+            return parseFloat(aa.substring(result11+7, result12)) - parseFloat(bb.substring(result21+7, result22));
+          }
+        }
+        var list = $("#artikli > .kartica").get();
+        list.sort(sort_criteria);
+        for (var i = 0; i < list.length; i++) {
+          list[i].parentNode.appendChild(list[i]);
+        }
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-md navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/kupac/prodavac/<%=sellerInfo.id%>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-shop"></i></a>
+          <span id="tekstPoredSlikeNava"><%=sellerInfo.username%></span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac">Home</a>
+              </li>
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac/profil">Profil</a>
+              </li>
+              <li id="odjava" class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="pozadina row justify-content-center" style="background-image: url(<%=sellerInfo.background_picture%>);">
+        <div id="divProfilne" class="col-8 col-sm-6 col-lg-4 col-xl-3">
+          <img id="profilna"src="<%=sellerInfo.profile_picture%>" alt="profilna slika">
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div id="tabela" class="table-responsive">
+          <table class="table table-dark table-hover">
+
+            <tr>
+              <th>Ime firme</th>
+              <th>Broj telefona</th>
+              <th>Email</th>
+              <th>Ulica sjedišta firme</th>
+              <th>Grad sjedišta firme</th>
+            </tr>
+
+            <tr id="informacije">
+              <td><%=sellerInfo.company_name%></td>
+              <td><%=sellerInfo.telephone_number%></td>
+              <td><%=sellerInfo.email%></td>
+              <td><%=sellerInfo.headquarters_street_name%></td>
+              <td><%=sellerInfo.headquarters_city%></td>
+            </tr>
+
+          </table>
+        </div>
+        <div></div>
+
+        <div id="ocjena1" class="col-6">
+          <%if(ocjena === 0){%>
+            <h6>Još niko nije ocijenio usluge prodavača</h6>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+          <%} else {%>
+            <h6>Ocjena usluga prodavača</h6>
+            <i class="zv bi bi-star-fill<%if(ocjena >= 1){%> puna<%}%>"></i>
+            <i class="zv bi bi-star-fill<%if(ocjena >= 2){%> puna<%}%>"></i>
+            <i class="zv bi bi-star-fill<%if(ocjena >= 3){%> puna<%}%>"></i>
+            <i class="zv bi bi-star-fill<%if(ocjena >= 4){%> puna<%}%>"></i>
+            <i class="zv bi bi-star-fill<%if(ocjena >= 5){%> puna<%}%>"></i>
+          <%}%>
+        </div>
+
+        <div></div>
+
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div id="komentari" class="row justify-content-center">
+        <h2>Komentari</h2>
+        <%for(let i=0; i<comments.length; i++){%>
+          <div class="div_slike_komentara">
+            <img class="slika_komentara" src="<%=comments[i].profile_picture%>">
+          </div>
+          <div class="komentar col-5">
+            <h6 class="nazivKomentatora" onclick="posjetiProfil('<%=comments[i].username%>')"><%=comments[i].first_name%> <%=comments[i].last_name%></h6>
+            <p><%=comments[i].text%></p>
+          </div>
+          <div class="col-12"></div>
+        <%}%>
+        <%if(comments.length === 0) {%>
+          <h6>Budite prvi koji će komentarisati:</h6>
+        <%}%>
+        <form id="komentar" method="post" action="/kupac/dodajKomentar">
+          <label for="text">Dodajte komentar: </label>
+          <textarea name="text" placeholder="Opišite usluge ovog prodavača.." required
+          <%if(status === 'Arhiviran'){%> disabled <%}%>></textarea>
+          <input type="text" name="seller_id" value="<%=sellerInfo.id%>" hidden>
+          <button type="submit" style="float: right;" class="btn btn-success"
+          <%if(status === 'Arhiviran'){%> disabled <%}%>>Dodaj komentar</button>
+        </form>
+      </div>
+      <div class="row justify-content-center">
+        <div id="ocjena" class="col-6" onmouseleave="resetuj()">
+          <%if(ocjena2 === 0){%>
+          <h6 id="ocijeniPrvi">Ocijenite prodavača</h6>
+            <i class="bi bi-star-fill" id="jedan" onmouseover="stajluj('jedan', '<%=ocjena2%>')" onclick="ocijeni(1, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill" id="dva" onmouseover="stajluj('dva', '<%=ocjena2%>')" onclick="ocijeni(2, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill" id="tri" onmouseover="stajluj('tri', '<%=ocjena2%>')" onclick="ocijeni(3, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill" id="cetiri" onmouseover="stajluj('cetiri', '<%=ocjena2%>')" onclick="ocijeni(4, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill" id="pet" onmouseover="stajluj('pet', '<%=ocjena2%>')" onclick="ocijeni(5, '<%=sellerInfo.id%>')"></i>
+          <%} else { %>
+            <h6 id="promijeniti">Promijenite vašu ocjenu</h6>
+            <i class="bi bi-star-fill<%if(ocjena2 >= 1){%> puna<%}%>" id="jedan" onmouseover="stajluj('jedan', '<%=ocjena2%>')" onclick="ocijeni(1, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill<%if(ocjena2 >= 2){%> puna<%}%>" id="dva" onmouseover="stajluj('dva', '<%=ocjena2%>')" onclick="ocijeni(2, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill<%if(ocjena2 >= 3){%> puna<%}%>" id="tri" onmouseover="stajluj('tri', '<%=ocjena2%>')" onclick="ocijeni(3, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill<%if(ocjena2 >= 4){%> puna<%}%>" id="cetiri" onmouseover="stajluj('cetiri', '<%=ocjena2%>')" onclick="ocijeni(4, '<%=sellerInfo.id%>')"></i>
+            <i class="bi bi-star-fill<%if(ocjena2 >= 5){%> puna<%}%>" id="pet" onmouseover="stajluj('pet', '<%=ocjena2%>')" onclick="ocijeni(5, '<%=sellerInfo.id%>')"></i>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <%if(articles.length === 0){%>
+          <div style="text-align: center;" class="alert alert-danger col-12 col-lg-8 col-xl-7">
+            Firma nema niti jedan artikl/uslugu!
+          </div>
+        <%} else {%>
+          <div style="display: block; margin-right: 5px;" class="btn-group">
+            <i style="float: right; font-size: 24px;" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <span>Sortiraj</span>
+            </i>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" onclick="sortiraj('ime')">Po imenu</a>
+              </li>
+              <li>
+                <a class="dropdown-item" onclick="sortiraj('raste')">Po cijeni <b><span style="font-size: 20px;">&#x2191</span></b></a>
+              </li>
+              <li>
+                <a class="dropdown-item" onclick="sortiraj('opada')">Po cijeni <b><span style="font-size: 20px;">&#x2193</span></b></a>
+              </li>
+            </ul>
+          </div>
+        <div style="display: block; margin-right: 5px;" class="btn-group">
+          <i style="float: right; font-size: 24px;" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <span>Filtriraj</span>
+          </i>
+          <ul class="dropdown-menu">
+            <%for(let i=0; i<categories.length; i++){%>
+            <li>
+              <a class="dropdown-item" onclick="promijeni('<%=sellerInfo.id%>', '<%=categories[i].id%>')">
+                <%=categories[i].category_name%>
+              </a>
+            </li>
+            <%}%>
+          </ul>
+        </div>
+      </div>
+      <div id="artikli" class="row justify-content-center">
+        <h2>Artikli i usluge</h2>
+        <%for(let i=0; i<articles.length; i++){%>
+        <div id="default<%=articles[i].id%>" class="kartica col-md-6 col-xl-4">
+          <div class="card">
+            <img src="<%=articles[i].picture%>" class="card-img-top" alt="article picture">
+            <div class="card-body">
+              <h5 class="card-title"><%=articles[i].article_name%></h5>
+              <p class="card-text"><%=articles[i].description%></p>
+              <span class="preostalo">Preostalo: <%=articles[i].quantity%></span>
+              <span class="cijena">Cijena: <%=articles[i].unit_price%> KM</span><br><br>
+              <div class="kategorije">
+                <%for(let j=1; j<articles[i].kategorije.length; j++){%>
+                <span class="kategorija" style="float: left;"><%=articles[i].kategorije[j][1]%></span>
+                <%}%>
+              </div>
+            </div>
+            <div class="nazivKompanije" onclick="posjetiArtikl('<%=articles[i].id%>')">Saznaj više</div>
+
+          </div>
+        </div>
+        <%}}%>
+      </div>
+    </div>
+
+    <script>
+      function posjetiArtikl(id_artikla){
+        location.assign('/kupac/artikl/' + id_artikla);
+      }
+      function posjetiProfil(username){
+        location.assign('/kupac/profil/' + username);
+      }
+      function stajluj(broj, nova){
+        glavna = nova;
+        if(broj === "pet"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "yellow";
+          document.getElementById("pet").style.color = "yellow";
+        } else if (broj === "cetiri"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "yellow";
+          document.getElementById("pet").style.color = "white";
+        } else if (broj === "tri"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        } else if (broj === "dva"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "white";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        } else {
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "white";
+          document.getElementById("tri").style.color = "white";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        }
+      }
+      function resetuj() {
+        document.getElementById("jedan").style.color = "white";
+        document.getElementById("dva").style.color = "white";
+        document.getElementById("tri").style.color = "white";
+        document.getElementById("cetiri").style.color = "white";
+        document.getElementById("pet").style.color = "white";
+        if (glavna >= 1) {
+          document.getElementById("jedan").style.color = "gold";
+        }
+        if (glavna >= 2) {
+          document.getElementById("dva").style.color = "gold";
+        }
+        if (glavna >= 3) {
+          document.getElementById("tri").style.color = "gold";
+        }
+        if (glavna >= 4) {
+          document.getElementById("cetiri").style.color = "gold";
+        }
+        if (glavna >= 5) {
+          document.getElementById("pet").style.color = "gold";
+        }
+      }
+    </script>
+
+    <!-- javascript kod, potreban za tooltip -->
+    <script type="text/javascript">
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    </script>
+
+  </body>
+</html>

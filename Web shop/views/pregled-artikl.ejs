@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="bs">
+  <head>
+
+    <title><%=article.article_name%></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> <!--bootstrap ikonice-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><!-- ajax -->
+
+    <link rel='stylesheet' href='/stylesheets/style-pregled-artikl.css' />
+
+    <script>
+      function promijeniKolicinu(id_artikla, id_sellera){
+        let kolicina = document.getElementById("polje" + id_artikla).value;
+        $.ajax({
+          url: "/kupac/narudzba/ukloni/" + id_sellera + "/" + id_artikla + "/" + kolicina,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+        });
+      }
+      var otvoren = false;
+
+      function otvoriArtikl(id_artikla){
+        location.assign('/kupac/artikl/' + id_artikla);
+      }
+    </script>
+
+    <script>
+      function dodaj(id_sellera, id_artikla){
+        $.ajax({
+          url: "/kupac/narudzba/dodaj/" + id_sellera + "/" + id_artikla + "/1",
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          if(otvoren){
+            zatvori();
+            daj_artikle();
+          } else {
+            daj_artikle();
+          }
+        });
+      }
+      var artikli;
+      function naruci(){
+        if(artikli.length === 0 ){
+          alert("Korpa je prazna!");
+          return;
+        }
+        document.getElementById("naruci").disabled = true;
+        setTimeout(() => {
+          $.ajax({
+            url: "/kupac/narudzba/potvrdi",
+            type: 'POST',
+            beforeSend: function () {
+            }
+          }).done(function (data) {
+            location.replace("/kupac");
+          });
+        }, 1000);
+
+      }
+      function daj_artikle(){
+        otvoren = true;
+        document.getElementById("prikazi_korpu").classList.toggle("d-none");
+        let ukupan_iznos = 0;
+        $.ajax({
+          url: "/kupac/narudzba/dajArtikle",
+          type: "POST",
+          success: function(result) {
+            artikli = result.artikli;
+
+            console.log(artikli);
+
+            // kreiranje narudzbe
+
+            let sadrzaj_narudzbe = document.getElementById("sadrzaj_narudzbe");
+            sadrzaj_narudzbe.classList.toggle("d-none");
+
+            for(let i=0; i<artikli.length; i++){
+
+              const artikl = document.createElement("div");
+              artikl.classList.toggle("artikl");
+              artikl.classList.toggle("col-12");
+              artikl.classList.toggle("col-lg-8");
+              artikl.classList.toggle("col-xl-7");
+              artikl.innerHTML = `<img class="slika" src="`+ artikli[i].picture +`">` +
+                                 `<h5 class="ime_artikla"><span class="link_ime_artikla" onclick="otvoriArtikl(` + artikli[i].id + `)">` +
+              artikli[i].article_name + `</span><i class="x bi bi-x" onclick="ukloni(`+ artikli[i].seller_id + `,` + artikli[i].id +
+              `, 'skroz')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ukloni iz korpe"></i></h5>` +
+              `<div class="kolicina">Količina: <input id="polje`+artikli[i].id+`"
+              onfocusout="promijeniKolicinu(`+ artikli[i].id + `,` + artikli[i].seller_id +`)"
+              class="inputKolicina" value="`+ artikli[i].kolicina +`" type="number" step="1" min="1" max="`+artikli[i].quantity+`"></div>` +
+              `<div class="cijena_artikla">Cijena: ` + artikli[i].unit_price + `</div><br>` + `<div class="ukupno_artikl">Ukupno: ` +
+              artikli[i].unit_price * artikli[i].kolicina + `</div><br>`;
+              ukupan_iznos += parseInt(artikli[i].unit_price * artikli[i].kolicina);
+              sadrzaj_narudzbe.append(artikl);
+            }
+            if(artikli.length === 0){
+              const uputa = document.createElement("div");
+              uputa.innerText = "Niste dodali ništa u korpu";
+              uputa.classList.toggle("alert");
+              uputa.classList.toggle("alert-danger");
+              sadrzaj_narudzbe.append(uputa);
+            }
+            else {
+              const ukupna_cijena = document.createElement("div");
+              ukupna_cijena.innerText = `Ukupan iznos: ` + ukupan_iznos;
+              ukupna_cijena.classList.toggle("alert");
+              ukupna_cijena.classList.toggle("alert-info");
+              sadrzaj_narudzbe.append(ukupna_cijena);
+            }
+            const dugmadKontenjer = document.createElement("div");
+            dugmadKontenjer.classList.toggle("dugmadKontenjer");
+            dugmadKontenjer.innerHTML = `<button id="naruci" class="btn btn-success" onclick="naruci()">Naruči <i class="naruciZnak bi bi-cart4"></i></button>
+                                        <button id="zatvoriKorpu" class="btn btn-warning" onclick="zatvori()">Zatvori <i class="zatvoriZnak bi bi-cart-x"></i></button>`;
+            sadrzaj_narudzbe.append(dugmadKontenjer);
+            document.getElementById("sadrzaj_narudzbe").scrollIntoView();
+          }
+        });
+      }
+    </script>
+
+    <script>
+      function zatvori(){
+        otvoren = false;
+        document.getElementById("prikazi_korpu").classList.toggle("d-none");
+        document.getElementById("sadrzaj_narudzbe").classList.toggle("d-none");
+        document.getElementById("sadrzaj_narudzbe").innerHTML = ``;
+      }
+    </script>
+
+    <script>
+      function ukloni(id_sellera, id_artikla, kolicina){
+        $.ajax({
+          url: "/kupac/narudzba/ukloni/" + id_sellera + "/" + id_artikla + "/" + kolicina,
+          type: 'POST',
+          beforeSend: function () {
+          }
+        }).done(function (data) {
+          if(otvoren){
+            zatvori();
+            daj_artikle();
+          }
+        });
+      }
+    </script>
+
+    <script>
+      var glavna = 0;
+      function ocijeni(ocjena, artikl_id){
+        let info = {
+          ocjena: ocjena,
+          artikl_id: artikl_id
+        }
+        JSON.stringify(info);
+        $.ajax({
+          url: "/kupac/ocijeniArtikl",
+          data: info,
+          type: 'POST',
+          success: function(result) {
+            document.getElementById("ocjena").removeAttribute("onmouseleave");
+            document.getElementById("jedan").removeAttribute("onmouseover");
+            document.getElementById("jedan").removeAttribute("onclick");
+            document.getElementById("jedan").style.cursor = "default";
+            document.getElementById("dva").removeAttribute("onmouseover");
+            document.getElementById("dva").removeAttribute("onclick");
+            document.getElementById("dva").style.cursor = "default";
+            document.getElementById("tri").removeAttribute("onmouseover");
+            document.getElementById("tri").removeAttribute("onclick");
+            document.getElementById("tri").style.cursor = "default";
+            document.getElementById("cetiri").removeAttribute("onmouseover");
+            document.getElementById("cetiri").removeAttribute("onclick");
+            document.getElementById("cetiri").style.cursor = "default";
+            document.getElementById("pet").removeAttribute("onmouseover");
+            document.getElementById("pet").removeAttribute("onclick");
+            document.getElementById("pet").style.cursor = "default";
+            let izbaciti = document.getElementById("ocijeniPrvi");
+            if(izbaciti) {
+              izbaciti.remove();
+            }
+            let promijeniti = document.getElementById("promijeniti");
+            if(promijeniti) {
+              promijeniti.remove();
+            }
+            if (parseInt(ocjena) >= 1) {
+              document.getElementById("jedan").style.color = "gold";
+            } else {
+              document.getElementById("jedan").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 2) {
+              document.getElementById("dva").style.color = "gold";
+            } else {
+              document.getElementById("dva").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 3) {
+              document.getElementById("tri").style.color = "gold";
+            } else {
+              document.getElementById("tri").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 4) {
+              document.getElementById("cetiri").style.color = "gold";
+            } else {
+              document.getElementById("cetiri").style.color = "white";
+            }
+            if (parseInt(ocjena) >= 5) {
+              document.getElementById("pet").style.color = "gold";
+            } else {
+              document.getElementById("pet").style.color = "white";
+            }
+            const tick = document.createElement("i");
+            tick.style.color = "lime";
+            tick.classList.toggle("bi");
+            tick.classList.toggle("bi-check2");
+            document.getElementById("ocjena").append(tick);
+          }
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+
+    <header id="heder">
+      <!-- Navigacijski menu uzet s linka: https://getbootstrap.com/docs/5.1/components/navbar/ -->
+      <nav class="navbar navbar-expand-md navbar-dark" style="background-color: black;">
+        <div class="container">
+          <a class="navbar-brand" href="/kupac/artikl/<%=article.id%>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Osvježi stranicu"><i class="bi bi-eye-fill"></i></a>
+          <span id="tekstPoredSlikeNava">Artikl</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac">Home</a>
+              </li>
+              <li class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/kupac/profil">Profil</a>
+              </li>
+              <li id="odjava" class="elementMenija nav-item">
+                <a class="navLink nav-link" href="/logout">Odjava</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="pozadinaKartica row justify-content-center">
+        <div id="ocjena1" class="col-lg-3">
+          <%if(ocjena === 0){%>
+            <h6>Još niko nije ostavio ocjenu</h6>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+            <i class="zv bi bi-star"></i>
+          <%} else {%>
+          <h6>Ocjena artikla/usluge</h6>
+          <i class="zv bi bi-star-fill<%if(ocjena >= 1){%> puna<%}%>"></i>
+          <i class="zv bi bi-star-fill<%if(ocjena >= 2){%> puna<%}%>"></i>
+          <i class="zv bi bi-star-fill<%if(ocjena >= 3){%> puna<%}%>"></i>
+          <i class="zv bi bi-star-fill<%if(ocjena >= 4){%> puna<%}%>"></i>
+          <i class="zv bi bi-star-fill<%if(ocjena >= 5){%> puna<%}%>"></i>
+          <%}%>
+        </div>
+
+        <div class="kartica col-10 col-md-6 col-lg-5">
+          <div class="card">
+            <img src="<%=article.picture%>" class="card-img-top" alt="slika artikla">
+            <div class="card-body">
+              <h5 class="card-title"><%=article.article_name%></h5>
+              <p class="card-text"><%=article.description%></p>
+              <span class="preostalo">Preostalo: <%=article.quantity%></span>
+              <span class="cijena">Cijena: <%=article.unit_price%> KM</span><br><br>
+              <div>
+                <%for(let j=1; j<article.kategorije.length; j++){%>
+                  <span class="kategorija" onclick="pretraziKategoriju('<%=article.kategorije[j][0]%>')"><%=article.kategorije[j][1]%></span>
+                <%}%>
+              </div>
+            </div>
+            <div class="nazivKompanije" onclick="otvoriFirmu('<%=article.sellerid%>')"><%=article.company_name%></div>
+          </div>
+        </div>
+        <div id="ocjena" class="col-lg-3" onmouseleave="resetuj()">
+          <%if(ocjena2 === 0){%>
+          <h6 id="ocijeniPrvi">Ocijenite artikl/uslugu</h6>
+          <i class="bi bi-star-fill" id="jedan" onmouseover="stajluj('jedan', '<%=ocjena2%>')" onclick="ocijeni(1, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill" id="dva" onmouseover="stajluj('dva', '<%=ocjena2%>')" onclick="ocijeni(2, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill" id="tri" onmouseover="stajluj('tri', '<%=ocjena2%>')" onclick="ocijeni(3, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill" id="cetiri" onmouseover="stajluj('cetiri', '<%=ocjena2%>')" onclick="ocijeni(4, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill" id="pet" onmouseover="stajluj('pet', '<%=ocjena2%>')" onclick="ocijeni(5, '<%=article.id%>')"></i>
+          <%} else { %>
+          <h6 id="promijeniti">Promijenite vašu ocjenu</h6>
+          <i class="bi bi-star-fill<%if(ocjena2 >= 1){%> puna<%}%>" id="jedan" onmouseover="stajluj('jedan', '<%=ocjena2%>')" onclick="ocijeni(1, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill<%if(ocjena2 >= 2){%> puna<%}%>" id="dva" onmouseover="stajluj('dva', '<%=ocjena2%>')" onclick="ocijeni(2, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill<%if(ocjena2 >= 3){%> puna<%}%>" id="tri" onmouseover="stajluj('tri', '<%=ocjena2%>')" onclick="ocijeni(3, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill<%if(ocjena2 >= 4){%> puna<%}%>" id="cetiri" onmouseover="stajluj('cetiri', '<%=ocjena2%>')" onclick="ocijeni(4, '<%=article.id%>')"></i>
+          <i class="bi bi-star-fill<%if(ocjena2 >= 5){%> puna<%}%>" id="pet" onmouseover="stajluj('pet', '<%=ocjena2%>')" onclick="ocijeni(5, '<%=article.id%>')"></i>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <div class="dugmadKontenjer">
+      <button id="dodaj" class="btn btn-primary" onclick="dodaj('<%=article.seller_id%>', '<%=article.id%>')"
+      <%if(status === 'Arhiviran'){%> disabled <%}%>>
+        Dodaj u korpu
+        <i class="dodajZnak bi bi-cart-plus-fill"></i>
+      </button>
+      <button id="prikazi_korpu" class="btn btn-info" onclick="daj_artikle()"
+      <%if(status === 'Arhiviran'){%> disabled <%}%>>
+        Otvori korpu
+        <i class="otvoriZnak bi bi-eye"></i>
+      </button>
+    </div>
+
+    <div class="container">
+      <div id="sadrzaj_narudzbe" class="d-none row justify-content-center">
+      </div>
+    </div>
+
+    <script>
+      function otvoriFirmu(id_firme){
+        location.assign('/kupac/prodavac/' + id_firme);
+      }
+      function pretraziKategoriju(id_kat){
+        location.assign('/kupac/pretraga/kategorija/' + id_kat);
+      }
+    </script>
+
+    <script>
+      function stajluj(broj, nova){
+        glavna = nova;
+        if(broj === "pet"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "yellow";
+          document.getElementById("pet").style.color = "yellow";
+        } else if (broj === "cetiri"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "yellow";
+          document.getElementById("pet").style.color = "white";
+        } else if (broj === "tri"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "yellow";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        } else if (broj === "dva"){
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "yellow";
+          document.getElementById("tri").style.color = "white";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        } else {
+          document.getElementById("jedan").style.color = "yellow";
+          document.getElementById("dva").style.color = "white";
+          document.getElementById("tri").style.color = "white";
+          document.getElementById("cetiri").style.color = "white";
+          document.getElementById("pet").style.color = "white";
+        }
+      }
+      function resetuj() {
+        document.getElementById("jedan").style.color = "white";
+        document.getElementById("dva").style.color = "white";
+        document.getElementById("tri").style.color = "white";
+        document.getElementById("cetiri").style.color = "white";
+        document.getElementById("pet").style.color = "white";
+        if (glavna >= 1) {
+          document.getElementById("jedan").style.color = "gold";
+        }
+        if (glavna >= 2) {
+          document.getElementById("dva").style.color = "gold";
+        }
+        if (glavna >= 3) {
+          document.getElementById("tri").style.color = "gold";
+        }
+        if (glavna >= 4) {
+          document.getElementById("cetiri").style.color = "gold";
+        }
+        if (glavna >= 5) {
+          document.getElementById("pet").style.color = "gold";
+        }
+      }
+    </script>
+
+    <!-- javascript kod, potreban za tooltip -->
+    <script type="text/javascript">
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    </script>
+
+  </body>
+</html>
